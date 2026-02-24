@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+  <title>Counter Widget</title>
+  <link rel='stylesheet' href='/widgets/counter/style.css' />
+</head>
+<body>
+  <main class='page'>
+    <nav class='breadcrumb editor-only'>
+      <a href='/'>Widget Hub</a>
+      <span class='separator'>/</span>
+      <span>Counter Widget</span>
+    </nav>
+    <h1 class='editor-only'>Counter Widget</h1>
+    <p class='subtitle editor-only'>State is saved per username.</p>
+
+    <section class='grid'>
+      <div class='panel row editor-only'>
+        <label for='username'>Username</label>
+        <input id='username' type='text' value='default' />
+        <button id='loadUserBtn' class='secondary'>Load User</button>
+        <span class='status' id='status'>Idle</span>
+      </div>
+
+      <div class='panel count-wrap'>
+        <h2 id='count' class='count'>0</h2>
+        <p id='counterLabel' class='counter-label'>Counter</p>
+      </div>
+
+      <div class='panel actions editor-only'>
+        <button id='decreaseBtn'>- Decrease</button>
+        <button id='increaseBtn'>+ Increase</button>
+        <button id='resetBtn' class='secondary'>Reset</button>
+      </div>
+
+      <div class='panel editor-only'>
+        <div class='config-grid'>
+          <div class='field wide'>
+            <label for='labelInput'>Label</label>
+            <input id='labelInput' type='text' />
+          </div>
+
+          <div class='field'>
+            <label for='fontType'>Typography</label>
+            <select id='fontType'>
+              <option value='basic'>Basic Font</option>
+              <option value='resident-evil'>Resident Evil</option>
+              <option value='god-of-war'>God of War</option>
+            </select>
+          </div>
+
+          <div class='field'>
+            <label for='countColor'>Count Color</label>
+            <input id='countColor' type='color' value='#a00000' />
+          </div>
+
+          <div class='field'>
+            <label for='labelColor'>Label Color</label>
+            <input id='labelColor' type='color' value='#a00000' />
+          </div>
+
+          <div class='field'>
+            <label for='countFontSize'>Count Font Size (px)</label>
+            <input id='countFontSize' type='number' step='1' min='20' max='320' value='96' />
+          </div>
+
+          <div class='field'>
+            <label for='labelFontSize'>Label Font Size (px)</label>
+            <input id='labelFontSize' type='number' step='1' min='12' max='220' value='40' />
+          </div>
+
+          <div class='field'>
+            <label for='letterSpacing'>Letter Spacing (px)</label>
+            <input id='letterSpacing' type='number' step='0.5' min='-10' max='60' value='0' />
+          </div>
+
+          <div class='field'>
+            <label for='wordSpacing'>Word Spacing (px)</label>
+            <input id='wordSpacing' type='number' step='1' min='-20' max='120' value='0' />
+          </div>
+
+          <div class='field checkbox-field'>
+            <label for='countShadowToggle'>Counter Text Shadow</label>
+            <input id='countShadowToggle' type='checkbox' />
+          </div>
+
+          <div class='field checkbox-field'>
+            <label for='labelShadowToggle'>Label Text Shadow</label>
+            <input id='labelShadowToggle' type='checkbox' />
+          </div>
+        </div>
+        <div class='config-actions'>
+          <button id='saveSettingsBtn'>Save Settings</button>
+        </div>
+      </div>
+
+      <div class='panel editor-only'>
+        <p class='subtitle'>Widget URL (for OBS/browser source):</p>
+        <div class='row'>
+          <input id='widgetUrlInput' type='text' readonly />
+          <button id='copyWidgetUrlBtn' class='secondary'>Copy URL</button>
+        </div>
+      </div>
+
+      <div class='panel editor-only'>
+        <p class='subtitle'>Stream Deck trigger URLs (recommended, no browser focus):</p>
+        <div class='action-grid'>
+          <div class='action-item'>
+            <p><strong>Increase</strong></p>
+            <div class='row'>
+              <input id='increaseApiUrlInput' type='text' readonly />
+              <button id='copyIncreaseUrlBtn' class='secondary'>Copy</button>
+              <button id='testIncreaseBtn' class='secondary'>Test</button>
+            </div>
+          </div>
+          <div class='action-item'>
+            <p><strong>Decrease</strong></p>
+            <div class='row'>
+              <input id='decreaseApiUrlInput' type='text' readonly />
+              <button id='copyDecreaseUrlBtn' class='secondary'>Copy</button>
+              <button id='testDecreaseBtn' class='secondary'>Test</button>
+            </div>
+          </div>
+          <div class='action-item'>
+            <p><strong>Reset</strong></p>
+            <div class='row'>
+              <input id='resetApiUrlInput' type='text' readonly />
+              <button id='copyResetUrlBtn' class='secondary'>Copy</button>
+              <button id='testResetBtn' class='secondary'>Test</button>
+            </div>
+          </div>
+        </div>
+        <p class='hint'>
+          Use Stream Deck action type <strong>Website Request</strong> with method <strong>GET</strong>.
+          This updates the counter without opening/focusing a browser window.
+        </p>
+        <p class='subtitle'>Optional browser trigger pages:</p>
+        <div class='links'>
+          <a id='increaseLink' href='/widgets/counter/increase.html?username=default' target='_blank' rel='noreferrer'>increase.html</a>
+          <a id='decreaseLink' href='/widgets/counter/decrease.html?username=default' target='_blank' rel='noreferrer'>decrease.html</a>
+          <a id='resetLink' href='/widgets/counter/reset.html?username=default' target='_blank' rel='noreferrer'>reset.html</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src='/widgets/counter/app.js'></script>
+</body>
+</html>

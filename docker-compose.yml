@@ -1,0 +1,12 @@
+services:
+  social-tools-web:
+    build: .
+    container_name: social-tools-web
+    ports:
+      - "4050:4050"
+    volumes:
+      - counter-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  counter-data:

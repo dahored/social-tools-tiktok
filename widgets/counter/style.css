@@ -1,0 +1,315 @@
+@font-face {
+  font-family: 'Resident Evil';
+  src: url('/assets/fonts/resident_evil_font/resident_evil_film.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'God of War';
+  src: url('/assets/fonts/god_of_war_font/berserker-regular-font/Berserker-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+:root {
+  --bg: #0f141d;
+  --panel: #161d29;
+  --panel-2: #1d2635;
+  --border: #2c3648;
+  --text: #edf2fb;
+  --muted: #9cabc2;
+  --accent: #1f8fff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background:
+    radial-gradient(circle at 0% 0%, #1a263a 0%, transparent 40%),
+    radial-gradient(circle at 100% 0%, #18212f 0%, transparent 35%),
+    var(--bg);
+}
+
+.page {
+  width: min(980px, 92vw);
+  margin: 0 auto;
+  padding: 26px 0 34px;
+}
+
+body.preview-mode {
+  background: transparent;
+  min-height: 0;
+}
+
+body.preview-mode .page {
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+
+body.preview-mode .editor-only {
+  display: none !important;
+}
+
+body.preview-mode .grid {
+  margin-top: 0;
+  gap: 0;
+}
+
+body.preview-mode .panel {
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+body.preview-mode .count-wrap {
+  text-align: center;
+  padding: 0;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.breadcrumb a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.breadcrumb a:hover {
+  color: var(--text);
+}
+
+.breadcrumb .separator {
+  color: var(--border);
+}
+
+.breadcrumb span:last-child {
+  color: var(--text);
+}
+
+h1 {
+  margin: 0 0 6px;
+  font-size: clamp(1.4rem, 2.8vw, 2.1rem);
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+}
+
+.grid {
+  margin-top: 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.panel {
+  background: linear-gradient(170deg, var(--panel), var(--panel-2));
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+label {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+input[type='text'],
+input[type='number'],
+select {
+  background: #0f1622;
+  color: var(--text);
+  border: 1px solid #34415a;
+  border-radius: 10px;
+  padding: 9px 10px;
+  min-height: 40px;
+}
+
+#widgetUrlInput {
+  flex: 1;
+  min-width: 320px;
+}
+
+input[readonly] {
+  background: #0d1520;
+}
+
+input[type='color'] {
+  width: 52px;
+  height: 40px;
+  border: 1px solid #34415a;
+  border-radius: 8px;
+  background: #0f1622;
+  padding: 2px;
+}
+
+input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 40px;
+}
+
+button.secondary {
+  background: #2a354a;
+}
+
+a {
+  color: #b8ddff;
+}
+
+.count-wrap {
+  text-align: center;
+  padding: 14px 10px;
+}
+
+.count {
+  font-size: clamp(3.3rem, 12vw, 8rem);
+  margin: 0;
+  line-height: 1;
+}
+
+.counter-label {
+  margin: 6px 0 0;
+  font-size: clamp(1.3rem, 4vw, 2.4rem);
+  letter-spacing: 0.04em;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.status {
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.links a,
+.links span {
+  color: #b8ddff;
+  text-decoration: none;
+  border: 1px solid #355680;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field.checkbox-field {
+  justify-content: center;
+}
+
+.field.wide {
+  grid-column: span 2;
+}
+
+.field input[type='color'] {
+  width: 100%;
+}
+
+.config-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.action-grid {
+  display: grid;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.action-item {
+  border: 1px solid #2d3e57;
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(7, 14, 24, 0.45);
+}
+
+.action-item p {
+  margin: 0 0 8px;
+  color: #d2e8ff;
+}
+
+.action-item input {
+  flex: 1;
+  min-width: 280px;
+}
+
+.hint {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 720px) {
+  .field.wide {
+    grid-column: auto;
+  }
+
+  .action-item input,
+  #widgetUrlInput {
+    min-width: 0;
+  }
+
+  .config-actions {
+    justify-content: stretch;
+  }
+
+  .config-actions button {
+    width: 100%;
+  }
+}

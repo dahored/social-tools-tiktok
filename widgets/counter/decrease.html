@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+  <title>Counter Decrease</title>
+  <style>body{font-family:Arial,sans-serif;padding:16px}code{background:#f2f2f2;padding:2px 6px;border-radius:4px}</style>
+</head>
+<body>
+  <h1>decrease.html</h1>
+  <p id='msg'>Running...</p>
+  <script>
+    (async function(){
+      const params = new URLSearchParams(location.search);
+      const username = (params.get('username') || 'default').replace(/[^a-zA-Z0-9_-]/g, '').slice(0,40) || 'default';
+      const res = await fetch('/api/counter/decrease?username=' + encodeURIComponent(username), { method: 'POST' });
+      const data = await res.json();
+      document.getElementById('msg').textContent = 'User @' + data.username + ' count = ' + data.count;
+    })();
+  </script>
+</body>
+</html>
