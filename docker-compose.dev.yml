@@ -1,0 +1,18 @@
+services:
+  social-tools-web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: social-tools-web-dev
+    ports:
+      - "4050:4050"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - counter-data:/app/data
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+
+volumes:
+  counter-data:

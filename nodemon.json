@@ -1,0 +1,5 @@
+{
+  "watch": ["server.js", "widgets/", "web/"],
+  "ignore": ["data/*", "node_modules/*"],
+  "ext": "js,html,css"
+}
