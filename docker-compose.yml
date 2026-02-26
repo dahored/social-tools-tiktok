@@ -1,12 +1,14 @@
 services:
-  social-tools-web:
+  social-tools-tiktok-web:
     build: .
-    container_name: social-tools-web
+    container_name: social-tools-tiktok-web
     ports:
       - "4050:4050"
     volumes:
-      - counter-data:/app/data
+      - app-data:/app/data
     restart: unless-stopped
+    env_file:
+      - .env
 
 volumes:
-  counter-data:
+  app-data:

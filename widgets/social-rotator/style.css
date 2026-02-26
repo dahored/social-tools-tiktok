@@ -1,0 +1,441 @@
+:root {
+  --bg:        #0a0a0f;
+  --surface:   #111118;
+  --surface-2: #18181f;
+  --surface-3: #1f1f28;
+  --border:    #2a2a38;
+  --border-2:  #35354a;
+  --text:      #f0f0f5;
+  --text-2:    #a0a0b8;
+  --text-3:    #6a6a82;
+  --tt-red:    #ff0050;
+  --tt-cyan:   #00f2ea;
+  --tt-glow-r: rgba(255,0,80,.18);
+  --tt-glow-c: rgba(0,242,234,.12);
+  --green:     #22c55e;
+  --radius:    16px;
+  --radius-sm: 10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% -5%, var(--tt-glow-r), transparent),
+    radial-gradient(ellipse 50% 35% at 90% 5%,  var(--tt-glow-c), transparent);
+}
+
+/* ── Preview mode ─────────────────────────────────────────── */
+
+body.preview-mode {
+  background: transparent;
+  min-height: 0;
+}
+
+body.preview-mode .page {
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+
+body.preview-mode .editor-only {
+  display: none !important;
+}
+
+body.preview-mode .editor-layout {
+  display: block;
+  margin: 0;
+}
+
+body.preview-mode .panel {
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+body.preview-mode .card-stage {
+  background: transparent;
+  border: none;
+  padding: 28px 24px;
+  min-height: 0;
+  justify-content: flex-start;
+}
+
+/* ── Page layout ──────────────────────────────────────────── */
+
+.page {
+  width: min(1040px, 94vw);
+  margin: 0 auto;
+  padding: 28px 0 64px;
+}
+
+.page-hd {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+}
+
+.breadcrumb a { color: var(--text-2); text-decoration: none; transition: color .15s; }
+.breadcrumb a:hover { color: var(--text); }
+.breadcrumb .sep { color: var(--text-3); }
+.breadcrumb .current { color: var(--text); font-weight: 500; }
+
+.page-title h1 {
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.page-title p { margin-top: 4px; color: var(--text-2); font-size: 0.88rem; }
+
+/* ── Two-column editor layout ─────────────────────────────── */
+
+.editor-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 16px;
+}
+
+.editor-sidebar { display: flex; flex-direction: column; gap: 16px; align-self: start; }
+.editor-main    { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 76px; align-self: start; }
+
+/* ── Panels ───────────────────────────────────────────────── */
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.panel-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 14px;
+}
+
+/* ── Social card (the OBS overlay element) ───────────────── */
+
+.card-stage {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 128px;
+  overflow: hidden;
+}
+
+.social-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: #ffffff;
+  border-radius: 24px; /* default; overridden by app.js via inline style */
+  padding: 10px 14px 10px 10px;
+  box-shadow: 0 4px 28px rgba(0,0,0,.45), 0 1px 4px rgba(0,0,0,.2);
+  width: 480px; /* default; overridden by app.js via inline style */
+}
+
+.card-platform-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-platform-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.card-handle {
+  flex: 1;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.card-follow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  cursor: default;
+  flex-shrink: 0;
+  white-space: nowrap;
+  user-select: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.card-follow svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.card-empty {
+  color: var(--text-3);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 8px;
+}
+
+/* ── Rotation animations ──────────────────────────────────── */
+
+@keyframes sr-slide-in  { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes sr-slide-out { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-50px); opacity: 0; } }
+@keyframes sr-fade-in   { from { opacity: 0; transform: scale(.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes sr-fade-out  { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(.95); } }
+
+.sr-slide-in  { animation: sr-slide-in  0.32s ease forwards; }
+.sr-slide-out { animation: sr-slide-out 0.32s ease forwards; }
+.sr-fade-in   { animation: sr-fade-in   0.32s ease forwards; }
+.sr-fade-out  { animation: sr-fade-out  0.32s ease forwards; }
+
+/* ── Accounts list ────────────────────────────────────────── */
+
+.accounts-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+
+.account-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.acct-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.acct-icon svg { width: 16px; height: 16px; }
+
+.acct-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.acct-platform {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+}
+
+.acct-handle {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.acct-remove {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  min-height: 28px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  color: var(--text-3);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+
+.acct-remove:hover { background: rgba(248,113,113,.1); border-color: rgba(248,113,113,.3); color: #f87171; }
+
+.accounts-empty { color: var(--text-3); font-size: 0.85rem; text-align: center; padding: 12px 0; }
+
+/* ── Add account form ─────────────────────────────────────── */
+
+.add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Form elements ────────────────────────────────────────── */
+
+label {
+  display: block;
+  color: var(--text-2);
+  font-size: 0.82rem;
+  margin-bottom: 6px;
+}
+
+input[type='text'],
+input[type='number'],
+select {
+  width: 100%;
+  background: var(--surface-3);
+  color: var(--text);
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  min-height: 40px;
+  outline: none;
+  transition: border-color .15s;
+}
+
+input:focus, select:focus { border-color: var(--tt-cyan); }
+
+input[readonly] { background: var(--surface-2); color: var(--text-2); }
+
+.field { display: flex; flex-direction: column; }
+
+/* ── Status bar ───────────────────────────────────────────── */
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 0.82rem;
+  color: var(--text-2);
+  margin-top: 10px;
+}
+
+.status-live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+  animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.username-row { display: flex; gap: 8px; }
+.username-row input { flex: 1; min-width: 0; }
+
+/* ── Buttons ──────────────────────────────────────────────── */
+
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  min-height: 40px;
+  transition: background .15s, border-color .15s, transform .1s;
+  white-space: nowrap;
+}
+
+button:active { transform: scale(.97); }
+
+.btn-primary {
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  border-color: rgba(99,155,255,.3);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(37,99,235,.25);
+  width: 100%;
+}
+.btn-primary:hover { background: linear-gradient(135deg, #1e40af, #1d4ed8); }
+
+.btn-ghost {
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--text-2);
+}
+.btn-ghost:hover { background: var(--surface-3); border-color: var(--border-2); color: var(--text); }
+
+.btn-sm { padding: 6px 12px; font-size: 0.8rem; min-height: 40px; }
+
+.config-actions { margin-top: 16px; }
+
+/* ── URL row ──────────────────────────────────────────────── */
+
+.url-row { display: flex; gap: 8px; align-items: center; }
+.url-row input { flex: 1; min-width: 0; }
+
+.hint { color: var(--text-3); font-size: 0.83rem; line-height: 1.5; }
+
+code {
+  background: var(--surface-3);
+  border: 1px solid var(--border-2);
+  padding: 2px 6px;
+  border-radius: 5px;
+  color: var(--tt-cyan);
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 0.83em;
+}
+
+/* ── Hint strip ───────────────────────────────────────────── */
+
+.obs-hint {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 720px) {
+  .editor-layout { grid-template-columns: 1fr; }
+}

@@ -1,18 +1,20 @@
 services:
-  social-tools-web:
+  social-tools-tiktok-web:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: social-tools-web-dev
+    container_name: social-tools-tiktok-web-dev
     ports:
       - "4050:4050"
     volumes:
       - .:/app
       - /app/node_modules
-      - counter-data:/app/data
+      - app-data:/app/data
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       - NODE_ENV=development
 
 volumes:
-  counter-data:
+  app-data:

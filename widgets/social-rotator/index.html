@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Social Rotator — Social Tools TikTok</title>
+  <link rel="stylesheet" href="/widgets/social-rotator/style.css" />
+  <script src="/auth-guard.js"></script>
+  <script src="/navbar.js"></script>
+</head>
+<body>
+  <main class="page">
+
+    <!-- ── Page header (editor only) ──────────────────────── -->
+    <header class="page-hd editor-only">
+      <nav class="breadcrumb">
+        <a href="/">Widget Hub</a>
+        <span class="sep">/</span>
+        <span class="current">Social Rotator</span>
+      </nav>
+      <div class="page-title">
+        <h1>Social Media Rotator</h1>
+        <p>Rotating social card overlay. Add your profiles and copy the OBS Browser Source URL.</p>
+      </div>
+    </header>
+
+    <!-- ── Editor + preview layout ────────────────────────── -->
+    <div class="editor-layout">
+
+      <!-- ── Left sidebar (editor only) ──────────────────── -->
+      <aside class="editor-sidebar editor-only">
+
+        <!-- Username panel -->
+        <div class="panel">
+          <p class="panel-title">Username</p>
+          <div class="username-row">
+            <input id="username" type="text" value="default" placeholder="username" />
+            <button id="loadUserBtn" class="btn-ghost">Load</button>
+          </div>
+          <div class="status-bar">
+            <span class="status-live-dot"></span>
+            <span id="status">Idle</span>
+          </div>
+        </div>
+
+        <!-- Accounts panel -->
+        <div class="panel">
+          <p class="panel-title">Accounts</p>
+          <div id="accountsList" class="accounts-list"></div>
+
+          <div class="add-form">
+            <div class="field">
+              <label for="addPlatform">Platform</label>
+              <select id="addPlatform">
+                <option value="twitch">Twitch</option>
+                <option value="youtube">YouTube</option>
+                <option value="tiktok">TikTok</option>
+                <option value="facebook">Facebook</option>
+                <option value="kick">Kick</option>
+                <option value="twitter">X / Twitter</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="addHandle">Handle / Username</label>
+              <input id="addHandle" type="text" placeholder="e.g. dahored or @dahored" autocomplete="off" />
+            </div>
+            <button id="addAccountBtn" class="btn-primary" style="margin-top:4px">+ Add Account</button>
+          </div>
+        </div>
+
+        <!-- Settings panel -->
+        <div class="panel">
+          <p class="panel-title">Rotation Settings</p>
+          <div class="field">
+            <label for="interval">Interval between cards (seconds)</label>
+            <input id="interval" type="number" min="2" max="60" value="5" />
+          </div>
+          <div class="field" style="margin-top:12px">
+            <label for="animation">Transition animation</label>
+            <select id="animation">
+              <option value="slide">Slide</option>
+              <option value="fade">Fade</option>
+            </select>
+          </div>
+          <div class="field" style="margin-top:12px">
+            <label for="borderRadius">Card border radius (px) — 0 square · 999 pill</label>
+            <input id="borderRadius" type="number" min="0" max="999" value="24" />
+          </div>
+          <div class="field" style="margin-top:12px">
+            <label for="cardWidth">Card width (px) — 100 min · 1200 max</label>
+            <input id="cardWidth" type="number" min="100" max="1200" value="480" />
+          </div>
+          <div class="config-actions">
+            <button id="saveBtn" class="btn-primary">Save Settings</button>
+          </div>
+        </div>
+
+        <!-- OBS URL panel (editor only) -->
+        <div class="panel editor-only">
+          <p class="panel-title">OBS Browser Source URL</p>
+          <p class="hint" style="margin-bottom:10px">
+            Copy this URL and paste it as a Browser Source in OBS. The <code>?preview=true</code> flag hides the editor and shows only the card on a transparent background.
+          </p>
+          <div class="url-row">
+            <input id="widgetUrl" type="text" readonly placeholder="Load a user first…" />
+            <button id="copyUrlBtn" class="btn-ghost btn-sm">Copy</button>
+          </div>
+          <div class="obs-hint">
+            Suggested Browser Source size: <strong>480 × 90 px</strong>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- ── Right main column ────────────────────────────── -->
+      <div class="editor-main">
+
+        <!-- Card preview — always visible (no editor-only) -->
+        <div class="card-stage">
+          <div id="social-card" class="social-card">
+            <div class="card-empty">Add an account to preview the card</div>
+          </div>
+        </div>
+
+        
+
+      </div><!-- /editor-main -->
+
+    </div><!-- /editor-layout -->
+
+  </main>
+
+  <script src="/widgets/social-rotator/app.js"></script>
+</body>
+</html>

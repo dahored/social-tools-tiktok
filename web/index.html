@@ -3,212 +3,349 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Social Tools - Widget Hub</title>
+  <title>Social Tools TikTok — Widget Hub</title>
+  <script src="/auth-guard.js"></script>
+  <script src="/navbar.js"></script>
   <style>
     :root {
-      --bg: #101318;
-      --panel: #171d26;
-      --panel-2: #1d2430;
-      --text: #e7edf7;
-      --muted: #97a3b8;
-      --accent: #32d296;
-      --border: #2b3444;
-      --cta: #4da3ff;
+      --bg:        #0a0a0f;
+      --surface:   #111118;
+      --surface-2: #18181f;
+      --surface-3: #1f1f28;
+      --border:    #2a2a38;
+      --border-2:  #35354a;
+      --text:      #f0f0f5;
+      --text-2:    #a0a0b8;
+      --text-3:    #6a6a82;
+      --tt-red:    #ff0050;
+      --tt-cyan:   #00f2ea;
+      --tt-glow-r: rgba(255,0,80,.18);
+      --tt-glow-c: rgba(0,242,234,.12);
+      --green:     #22c55e;
+      --radius:    16px;
+      --radius-sm: 10px;
     }
 
-    * { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      margin: 0;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
       color: var(--text);
-      background:
-        radial-gradient(circle at 20% 0%, #1b2535 0%, transparent 40%),
-        radial-gradient(circle at 90% 20%, #182a24 0%, transparent 35%),
-        var(--bg);
       min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse 60% 40% at 10% -5%, var(--tt-glow-r), transparent),
+        radial-gradient(ellipse 50% 35% at 90% 5%,  var(--tt-glow-c), transparent);
     }
 
     .container {
-      width: min(980px, 92vw);
+      width: min(1040px, 94vw);
       margin: 0 auto;
-      padding: 36px 0 52px;
+      padding: 32px 0 64px;
+    }
+
+    .hub-hd {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .hub-title {
+      font-size: clamp(1.2rem, 2vw, 1.5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .hub-sub {
+      color: var(--text-2);
+      font-size: 0.875rem;
+      margin: 4px 0 0;
     }
 
     .header {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 26px;
-      gap: 12px;
+      gap: 16px;
+      margin-bottom: 40px;
       flex-wrap: wrap;
     }
 
-    h1 {
-      margin: 0;
-      font-size: clamp(1.5rem, 2.4vw, 2.2rem);
-      letter-spacing: 0.4px;
+    .brand { display: flex; align-items: center; gap: 14px; }
+
+    .brand-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--tt-red), #c400d6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.35rem;
+      box-shadow: 0 0 20px var(--tt-glow-r);
+      flex-shrink: 0;
     }
 
-    .sub {
-      margin: 6px 0 0;
-      color: var(--muted);
-      font-size: 0.95rem;
+    .brand-text h1 {
+      font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+      font-weight: 700; letter-spacing: -0.02em; line-height: 1.2;
     }
+    .brand-text p { margin-top: 4px; color: var(--text-2); font-size: 0.88rem; }
+
+    .header-badges { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding-top: 4px; }
 
     .badge {
-      background: #122920;
-      border: 1px solid #23483a;
-      color: #8df2ca;
-      padding: 7px 11px;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 999px;
+      font-size: 0.8rem; font-weight: 500; white-space: nowrap;
+    }
+    .badge-port { background: rgba(0,242,234,.08); border: 1px solid rgba(0,242,234,.2); color: var(--tt-cyan); }
+    .badge-live { background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.2); color: var(--green); }
+    .badge-dot  { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: pulse 2s ease infinite; }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    .section-label {
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-3); margin-bottom: 14px;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 14px;
-    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(256px, 1fr)); gap: 16px; }
 
     .card {
-      background: linear-gradient(160deg, var(--panel) 0%, var(--panel-2) 100%);
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      min-height: 170px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      border-radius: var(--radius);
+      padding: 20px;
+      min-height: 192px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      transition: border-color .2s, box-shadow .2s, transform .15s;
+      position: relative; overflow: hidden;
+    }
+    .card::before {
+      content: ''; position: absolute; inset: 0; border-radius: inherit;
+      opacity: 0; transition: opacity .2s; pointer-events: none;
+      background: linear-gradient(135deg, var(--tt-glow-r), var(--tt-glow-c));
+    }
+    .card:hover { border-color: var(--border-2); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,.4); }
+    .card:hover::before { opacity: 1; }
+    .card.card-live { border-color: rgba(34,197,94,.2); }
+    .card.card-live:hover { border-color: rgba(34,197,94,.4); box-shadow: 0 8px 32px rgba(34,197,94,.08); }
+
+    .card-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.05rem; margin-bottom: 12px;
+    }
+    .card-icon-green { background: rgba(34,197,94,.12); }
+    .card-icon-blue  { background: rgba(99,102,241,.12); }
+    .card-icon-amber  { background: rgba(245,158,11,.10); }
+    .card-icon-pink   { background: rgba(236,72,153,.10); }
+    .card-icon-purple { background: rgba(145,70,255,.12); }
+
+    .card h2 { font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; }
+    .card p  { color: var(--text-2); font-size: 0.875rem; line-height: 1.5; margin-top: 4px; }
+
+    .card-footer {
+      margin-top: 16px; display: flex; align-items: center;
+      justify-content: space-between; gap: 8px; flex-wrap: wrap;
     }
 
-    .card h2 {
-      margin: 0 0 8px;
-      font-size: 1.05rem;
-      font-weight: 600;
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.78rem; font-weight: 500; padding: 4px 10px; border-radius: 999px;
     }
-
-    .card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.4;
-    }
-
-    .status {
-      margin-top: 14px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #c7d3e9;
-      font-size: 0.82rem;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 5px 10px;
-      width: fit-content;
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #6b7280;
-    }
-
-    .dot.live { background: var(--accent); }
-
-    .actions {
-      margin-top: 12px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
+    .status-pill-live    { background: rgba(34,197,94,.1); color: var(--green); border: 1px solid rgba(34,197,94,.2); }
+    .status-pill-pending { background: rgba(107,114,128,.08); color: var(--text-3); border: 1px solid var(--border); }
+    .status-dot          { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .status-dot-live     { animation: pulse 2s ease infinite; }
 
     .btn {
-      text-decoration: none;
-      color: white;
-      background: #2d3c57;
-      border: 1px solid #41536f;
-      padding: 7px 10px;
-      border-radius: 9px;
-      font-size: 0.84rem;
+      display: inline-flex; align-items: center; gap: 6px;
+      text-decoration: none; font-size: 0.82rem; font-weight: 600;
+      padding: 7px 13px; border-radius: var(--radius-sm);
+      border: 1px solid transparent; cursor: pointer;
+      transition: background .15s, border-color .15s, transform .1s;
+      white-space: nowrap;
     }
-
-    .btn.primary {
-      background: #1f6fd4;
-      border-color: #3a87e8;
+    .btn:active { transform: scale(.97); }
+    .btn-primary {
+      background: linear-gradient(135deg, #1d4ed8, #2563eb);
+      border-color: rgba(99,155,255,.3); color: #fff;
+      box-shadow: 0 2px 12px rgba(37,99,235,.25);
     }
+    .btn-primary:hover { background: linear-gradient(135deg, #1e40af, #1d4ed8); }
+    .btn-ghost { background: var(--surface-2); border-color: var(--border); color: var(--text-2); }
+    .btn-ghost:hover { background: var(--surface-3); border-color: var(--border-2); color: var(--text); }
 
-    .empty {
-      margin-top: 24px;
-      padding: 18px;
-      border-radius: 12px;
-      border: 1px dashed #35435a;
-      color: #b8c5dc;
-      background: rgba(15, 22, 34, 0.5);
+    .card-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+
+    .info-box {
+      margin-top: 28px; padding: 16px 20px; border-radius: var(--radius-sm);
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text-2); font-size: 0.875rem; line-height: 1.6;
+      display: flex; align-items: center; gap: 10px;
     }
 
     code {
-      background: #0f1622;
-      border: 1px solid #2a3550;
+      background: var(--surface-3); border: 1px solid var(--border-2);
+      padding: 2px 7px; border-radius: 6px; color: var(--tt-cyan);
+      font-family: "SF Mono","Fira Code",monospace; font-size: 0.83em;
+    }
+
+    /* ── Auth nav ───────────────────────────────────────────── */
+    #authNav { display: flex; align-items: center; gap: 8px; }
+
+    .btn-nav {
+      display: inline-flex; align-items: center; gap: 5px;
+      text-decoration: none; font-size: 0.8rem; font-weight: 600;
+      padding: 6px 12px; border-radius: 999px;
+      border: 1px solid transparent; cursor: pointer;
+      transition: background .15s, border-color .15s;
+      font-family: inherit; white-space: nowrap;
+    }
+
+    .btn-nav-login {
+      background: rgba(255,0,80,.08);
+      border-color: rgba(255,0,80,.25);
+      color: #ff6080;
+    }
+    .btn-nav-login:hover { background: rgba(255,0,80,.15); }
+
+    .btn-nav-logout {
+      background: var(--surface-2);
+      border-color: var(--border);
+      color: var(--text-2);
+    }
+    .btn-nav-logout:hover { background: var(--surface-3); color: var(--text); }
+
+    .user-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.8rem; color: var(--text-2);
+    }
+
+    .user-avatar {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--tt-red), #c400d6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+    }
+
+    .role-badge {
+      font-size: 0.68rem;
       padding: 2px 6px;
-      border-radius: 6px;
-      color: #b6e3ff;
+      border-radius: 999px;
+      font-weight: 600;
+      background: rgba(0,242,234,.08);
+      border: 1px solid rgba(0,242,234,.2);
+      color: var(--tt-cyan);
+    }
+
+    @media (max-width: 600px) {
+      .hub-hd { flex-direction: column; }
+      .grid   { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <main class="container">
-    <div class="header">
+
+    <div class="hub-hd">
       <div>
-        <h1>Social Tools - Widget Hub</h1>
-        <p class="sub">Launch and manage widgets for your stream setup.</p>
+        <p class="hub-title">Widget Hub</p>
+        <p class="hub-sub">Streaming overlays for your TikTok setup</p>
       </div>
-      <div class="badge">LAN Ready on port 4050</div>
+      <div class="header-badges">
+        <span class="badge badge-live"><span class="badge-dot"></span> Server running</span>
+        <span class="badge badge-port">Port 4050</span>
+      </div>
     </div>
+
+    <p class="section-label">Available Widgets</p>
 
     <section class="grid" aria-label="Widget list">
-      <article class="card">
+
+      <article class="card card-live">
         <div>
+          <div class="card-icon card-icon-green">🔢</div>
           <h2>Counter Widget</h2>
-          <p>Per-username counter with saved label, colors, and font type.</p>
-          <div class="actions">
-            <a class="btn primary" href="/widgets/counter/index.html">Open Widget</a>
-            <a class="btn" href="/widgets/counter/increase.html?username=default" target="_blank" rel="noreferrer">increase.html</a>
+          <p>Per-username counter with saved label, colors, font type, and live SSE updates.</p>
+          <div class="card-actions">
+            <a class="btn btn-primary" href="/widgets/counter/index.html">Open Widget</a>
+            <a class="btn btn-ghost" href="/widgets/counter/increase.html?username=default" target="_blank" rel="noreferrer">increase.html</a>
           </div>
         </div>
-        <div class="status"><span class="dot live"></span> Live</div>
+        <div class="card-footer">
+          <span class="status-pill status-pill-live">
+            <span class="status-dot status-dot-live"></span> Live
+          </span>
+        </div>
+      </article>
+
+      <article class="card card-live">
+        <div>
+          <div class="card-icon card-icon-purple">📡</div>
+          <h2>Social Rotator</h2>
+          <p>Rotating social media card for Twitch, YouTube, TikTok, Facebook, Kick, and Twitter.</p>
+          <div class="card-actions">
+            <a class="btn btn-primary" href="/widgets/social-rotator/index.html">Open Widget</a>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="status-pill status-pill-live">
+            <span class="status-dot status-dot-live"></span> Live
+          </span>
+        </div>
       </article>
 
       <article class="card">
         <div>
+          <div class="card-icon card-icon-blue">🔔</div>
           <h2>Alerts Widget</h2>
-          <p>Placeholder for follow, like, donation, and event alerts.</p>
+          <p>Follow, like, donation, and event alerts with custom animations.</p>
         </div>
-        <div class="status"><span class="dot"></span> Not created yet</div>
+        <div class="card-footer">
+          <span class="status-pill status-pill-pending"><span class="status-dot"></span> Not created yet</span>
+        </div>
       </article>
 
       <article class="card">
         <div>
+          <div class="card-icon card-icon-amber">🎯</div>
           <h2>Goals Widget</h2>
-          <p>Placeholder for followers, subs, or donation goals.</p>
+          <p>Followers, subscriber, or donation goal progress bars.</p>
         </div>
-        <div class="status"><span class="dot"></span> Not created yet</div>
+        <div class="card-footer">
+          <span class="status-pill status-pill-pending"><span class="status-dot"></span> Not created yet</span>
+        </div>
       </article>
 
       <article class="card">
         <div>
+          <div class="card-icon card-icon-pink">💬</div>
           <h2>Chat Overlay</h2>
-          <p>Placeholder for a styled live chat overlay widget.</p>
+          <p>Styled live chat overlay widget for OBS browser source.</p>
         </div>
-        <div class="status"><span class="dot"></span> Not created yet</div>
+        <div class="card-footer">
+          <span class="status-pill status-pill-pending"><span class="status-dot"></span> Not created yet</span>
+        </div>
       </article>
+
     </section>
 
-    <div class="empty">
-      Access from your LAN using <code>http://YOUR_LOCAL_IP:4050</code> after running Docker.
+    <div class="info-box">
+      <span>🌐</span>
+      <span>
+        Access from your LAN at <code>http://YOUR_LOCAL_IP:4050</code> after running
+        <code>docker compose up -d --build</code>
+      </span>
     </div>
+
   </main>
+
 </body>
 </html>
