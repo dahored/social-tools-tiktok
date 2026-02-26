@@ -95,3 +95,46 @@ Set `DB_PROVIDER` in `.env`:
 | SUPER_ADMIN  | Manage all users, assign any role               |
 | ADMIN        | Manage users they created (ADMIN + MEMBER)      |
 | MEMBER       | No user management                              |
+
+---
+
+## Seed
+
+Creates a `SUPER_ADMIN` and an `ADMIN` user. Safe to re-run — skips users that already exist.
+
+### Run inside the dev container
+
+```bash
+docker exec social-tools-tiktok-web-dev npm run seed
+```
+
+### Default credentials
+
+| Role        | Email                  | Password         |
+|-------------|------------------------|------------------|
+| SUPER_ADMIN | `superadmin@local.dev` | `SuperAdmin1234!` |
+| ADMIN       | `admin@local.dev`      | `Admin1234!`      |
+
+### Custom credentials via env vars
+
+```bash
+docker exec \
+  -e SEED_SUPER_NAME="Diego" \
+  -e SEED_SUPER_EMAIL="diego@example.com" \
+  -e SEED_SUPER_PASSWORD="MySecret123!" \
+  -e SEED_ADMIN_NAME="Admin User" \
+  -e SEED_ADMIN_EMAIL="admin@example.com" \
+  -e SEED_ADMIN_PASSWORD="AdminPass123!" \
+  social-tools-tiktok-web-dev npm run seed
+```
+
+### Available env vars
+
+| Variable             | Default                 |
+|----------------------|-------------------------|
+| `SEED_SUPER_NAME`    | `Super Admin`           |
+| `SEED_SUPER_EMAIL`   | `superadmin@local.dev`  |
+| `SEED_SUPER_PASSWORD`| `SuperAdmin1234!`       |
+| `SEED_ADMIN_NAME`    | `Admin`                 |
+| `SEED_ADMIN_EMAIL`   | `admin@local.dev`       |
+| `SEED_ADMIN_PASSWORD`| `Admin1234!`            |
