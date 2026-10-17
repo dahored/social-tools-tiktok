@@ -4,6 +4,7 @@ const repo = require('../repositories/social-rotator.repository');
 
 const VALID_PLATFORMS = new Set(['twitch', 'youtube', 'tiktok', 'facebook', 'kick', 'twitter']);
 const VALID_ANIMATIONS = new Set(['slide', 'fade']);
+const VALID_GAMES      = new Set(['default', 'gta', 'resident-evil', 'god-of-war']);
 
 function sanitizeUsername(raw) {
   const s = String(raw || 'default').trim().replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 40);
@@ -29,8 +30,9 @@ async function saveSettings(data) {
   const animation    = VALID_ANIMATIONS.has(data.animation) ? data.animation : 'slide';
   const borderRadius = Math.max(0, Math.min(999, Math.round(Number(data.borderRadius) ?? 24)));
   const cardWidth    = Math.max(100, Math.min(1200, Math.round(Number(data.cardWidth) || 480)));
+  const game         = VALID_GAMES.has(data.game) ? data.game : 'default';
 
-  return repo.saveSettings({ username, accounts, interval, animation, borderRadius, cardWidth });
+  return repo.saveSettings({ username, accounts, interval, animation, borderRadius, cardWidth, game });
 }
 
 module.exports = { getSettings, saveSettings };

@@ -143,63 +143,221 @@ body.preview-mode .card-stage {
   overflow: hidden;
 }
 
+/*
+ * All card dimensions scale with --s (cardWidth / 560), set by app.js.
+ * --accent / --accent-rgb / --accent-text / --brand are set per platform.
+ */
 .social-card {
+  --s: 0.857;
+  --accent: #53FC18;
+  --accent-rgb: 83, 252, 24;
+  --accent-text: #000;
+  --brand: #53FC18;
+
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 14px;
-  background: #ffffff;
-  border-radius: 24px; /* default; overridden by app.js via inline style */
-  padding: 10px 14px 10px 10px;
-  box-shadow: 0 4px 28px rgba(0,0,0,.45), 0 1px 4px rgba(0,0,0,.2);
-  width: 480px; /* default; overridden by app.js via inline style */
+  gap: calc(18px * var(--s));
+  width: 480px;          /* default; overridden by app.js via inline style */
+  border-radius: 24px;   /* default; overridden by app.js via inline style */
+  padding: calc(16px * var(--s)) calc(30px * var(--s)) calc(16px * var(--s)) calc(20px * var(--s));
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(var(--accent-rgb), .22), transparent 55%),
+    radial-gradient(90% 120% at 100% 100%, rgba(var(--accent-rgb), .16), transparent 60%),
+    linear-gradient(180deg, rgba(22, 24, 30, .94), rgba(10, 12, 16, .96));
+  border: calc(2px * var(--s)) solid rgba(var(--accent-rgb), .85);
+  box-shadow:
+    0 0 calc(18px * var(--s)) rgba(var(--accent-rgb), .45),
+    0 0 calc(2px * var(--s)) rgba(var(--accent-rgb), .9),
+    inset 0 0 calc(24px * var(--s)) rgba(var(--accent-rgb), .12),
+    inset 0 1px 0 rgba(255, 255, 255, .08),
+    0 calc(8px * var(--s)) calc(30px * var(--s)) rgba(0, 0, 0, .55);
+  overflow: hidden;
+  isolation: isolate;
+  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+/* Diagonal light stripes, bottom-right corner */
+.social-card::after {
+  content: '';
+  position: absolute;
+  right: calc(-10px * var(--s));
+  bottom: calc(-10px * var(--s));
+  width: calc(90px * var(--s));
+  height: calc(70px * var(--s));
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0 calc(10px * var(--s)),
+    rgba(var(--accent-rgb), .35) calc(10px * var(--s)) calc(22px * var(--s))
+  );
+  -webkit-mask-image: linear-gradient(315deg, #000 30%, transparent 75%);
+          mask-image: linear-gradient(315deg, #000 30%, transparent 75%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Diagonal light streak, bottom-left corner */
+.social-card::before {
+  content: '';
+  position: absolute;
+  left: calc(-14px * var(--s));
+  bottom: calc(-6px * var(--s));
+  width: calc(60px * var(--s));
+  height: calc(14px * var(--s));
+  border-radius: 999px;
+  background: rgba(var(--accent-rgb), .45);
+  transform: rotate(-40deg);
+  filter: blur(calc(1px * var(--s)));
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Small accent strokes ("sparkles") */
+.card-deco {
+  position: absolute;
+  width: calc(18px * var(--s));
+  height: calc(4px * var(--s));
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 calc(8px * var(--s)) rgba(var(--accent-rgb), .9);
+  pointer-events: none;
+}
+
+.card-deco--l1 { left: calc(10px * var(--s));  top: calc(22px * var(--s)); transform: rotate(-55deg); }
+.card-deco--l2 { left: calc(6px * var(--s));   top: calc(52px * var(--s)); transform: rotate(-55deg); width: calc(12px * var(--s)); opacity: .7; }
+.card-deco--r1 { right: calc(10px * var(--s)); top: calc(20px * var(--s)); transform: rotate(-50deg); }
+.card-deco--r2 { right: calc(6px * var(--s));  top: calc(42px * var(--s)); transform: rotate(-12deg); width: calc(14px * var(--s)); }
+
+/* Platform icon tile */
 .card-platform-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+  position: relative;
+  width: calc(76px * var(--s));
+  height: calc(76px * var(--s));
+  border-radius: calc(18px * var(--s));
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  background: var(--brand);
+  border: calc(2px * var(--s)) solid rgba(255, 255, 255, .22);
+  box-shadow:
+    0 0 calc(18px * var(--s)) rgba(var(--accent-rgb), .55),
+    inset 0 calc(-6px * var(--s)) calc(10px * var(--s)) rgba(0, 0, 0, .25),
+    0 calc(4px * var(--s)) calc(10px * var(--s)) rgba(0, 0, 0, .45);
+  overflow: hidden;
+}
+
+/* Glossy highlight on the tile */
+.card-platform-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(255, 255, 255, .38) 0%, rgba(255, 255, 255, .08) 45%, transparent 55%);
+  pointer-events: none;
 }
 
 .card-platform-icon svg {
-  width: 28px;
-  height: 28px;
+  position: relative;
+  width: 55%;
+  height: 55%;
+  filter: drop-shadow(0 calc(2px * var(--s)) calc(2px * var(--s)) rgba(0, 0, 0, .3));
 }
 
-.card-handle {
+/* Text block */
+.card-text {
   flex: 1;
-  font-size: 1.05rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.card-kicker {
+  font-size: calc(12px * var(--s));
+  font-weight: 600;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .7);
+  margin-bottom: calc(4px * var(--s));
+}
+
+.card-platform {
+  font-size: calc(19px * var(--s));
   font-weight: 700;
-  color: #111111;
+  color: rgba(255, 255, 255, .92);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-width: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  text-shadow: 0 calc(2px * var(--s)) calc(6px * var(--s)) rgba(0, 0, 0, .5);
 }
 
+.card-handle {
+  font-size: calc(32px * var(--s));
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: var(--accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: calc(2px * var(--s));
+  text-shadow: 0 0 calc(12px * var(--s)) rgba(var(--accent-rgb), .45);
+}
+
+/* Vertical divider */
+.card-divider {
+  align-self: stretch;
+  width: 1px;
+  margin: calc(8px * var(--s)) 0;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, .22), transparent);
+  flex-shrink: 0;
+}
+
+/* Follow pill */
 .card-follow {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 10px 20px;
+  gap: calc(9px * var(--s));
+  padding: calc(13px * var(--s)) calc(26px * var(--s));
   border-radius: 999px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  border: none;
-  cursor: default;
+  font-size: calc(20px * var(--s));
+  font-weight: 800;
   flex-shrink: 0;
   white-space: nowrap;
   user-select: none;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--accent-text);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .35) 0%, rgba(255, 255, 255, .06) 48%, rgba(0, 0, 0, .08) 100%),
+    var(--accent);
+  border: calc(2px * var(--s)) solid rgba(255, 255, 255, .35);
+  box-shadow:
+    0 0 calc(16px * var(--s)) rgba(var(--accent-rgb), .6),
+    inset 0 calc(-3px * var(--s)) calc(6px * var(--s)) rgba(0, 0, 0, .2),
+    0 calc(4px * var(--s)) calc(10px * var(--s)) rgba(0, 0, 0, .4);
+  overflow: hidden;
+}
+
+/* Animated shine sweep across the button */
+.card-follow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .45), transparent);
+  transform: skewX(-20deg);
+  animation: sr-shine 3.2s ease-in-out infinite;
+}
+
+@keyframes sr-shine {
+  0%, 60% { left: -60%; }
+  100%    { left: 130%; }
 }
 
 .card-follow svg {
-  width: 15px;
-  height: 15px;
+  width: calc(20px * var(--s));
+  height: calc(20px * var(--s));
   flex-shrink: 0;
 }
 
@@ -208,7 +366,207 @@ body.preview-mode .card-stage {
   font-size: 0.9rem;
   text-align: center;
   padding: 8px;
+  width: 100%;
 }
+
+/* ── Game styles (data-game on .social-card) ─────────────────
+   Override the default neon look. Brand colour (--brand / --accent) still
+   tints the icon tile and the follow button where it fits the game. */
+
+/* GTA — Vice City sunset, heavy outlined lettering, hard black outlines */
+.social-card[data-game="gta"] {
+  --ink: #0b0b0d;
+  background:
+    linear-gradient(90deg, rgba(11, 11, 13, .94) 55%, rgba(11, 11, 13, .82));
+  border: calc(4px * var(--s)) solid var(--ink);
+  box-shadow:
+    calc(8px * var(--s)) calc(8px * var(--s)) 0 #ff3c8e,
+    0 calc(8px * var(--s)) calc(24px * var(--s)) rgba(0, 0, 0, .5);
+}
+.social-card[data-game="gta"]::before { display: none; }
+.social-card[data-game="gta"]::after {
+  left: 0; right: 0; bottom: 0;
+  width: auto;
+  height: calc(7px * var(--s));
+  background: linear-gradient(90deg, #5a1470, #c62a7d, #ff5e6c, #ffa04a, #ffd27a);
+  -webkit-mask-image: none;
+          mask-image: none;
+  z-index: 0;
+}
+.social-card[data-game="gta"] .card-deco,
+.social-card[data-game="gta"] .card-divider { display: none; }
+.social-card[data-game="gta"] .card-platform-icon {
+  border: calc(4px * var(--s)) solid var(--ink);
+  border-radius: calc(10px * var(--s));
+  box-shadow: calc(5px * var(--s)) calc(5px * var(--s)) 0 var(--ink);
+}
+.social-card[data-game="gta"] .card-kicker {
+  font-family: 'GTA', sans-serif;
+  font-size: calc(16px * var(--s));
+  letter-spacing: .08em;
+  color: #ffb341;
+  margin-bottom: 0;
+}
+.social-card[data-game="gta"] .card-platform,
+.social-card[data-game="gta"] .card-handle {
+  font-family: 'GTA', sans-serif;
+  font-weight: 400;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  -webkit-text-stroke: calc(6px * var(--s)) var(--ink);
+  paint-order: stroke fill;
+  text-shadow: none;
+}
+.social-card[data-game="gta"] .card-platform { font-size: calc(22px * var(--s)); color: #fff; }
+.social-card[data-game="gta"] .card-handle {
+  font-size: calc(40px * var(--s));
+  line-height: 1;
+  color: #fff;
+  filter: drop-shadow(0 calc(3px * var(--s)) 0 var(--ink));
+}
+.social-card[data-game="gta"] .card-follow {
+  font-family: 'GTA', sans-serif;
+  font-weight: 400;
+  font-size: calc(24px * var(--s));
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  border-radius: calc(6px * var(--s));
+  border: calc(3px * var(--s)) solid var(--ink);
+  background: var(--accent);
+  box-shadow: calc(5px * var(--s)) calc(5px * var(--s)) 0 var(--ink);
+  transform: skewX(-10deg);
+}
+
+/* Resident Evil — dark, bloody, typewritten */
+.social-card[data-game="resident-evil"] {
+  background:
+    radial-gradient(120% 160% at 0% 50%, rgba(110, 0, 0, .45), transparent 60%),
+    linear-gradient(180deg, rgba(14, 8, 8, .96), rgba(6, 3, 3, .97));
+  border: calc(1px * var(--s)) solid rgba(170, 0, 0, .75);
+  box-shadow:
+    0 0 calc(22px * var(--s)) rgba(140, 0, 0, .55),
+    inset 0 0 calc(40px * var(--s)) rgba(0, 0, 0, .9),
+    0 calc(8px * var(--s)) calc(30px * var(--s)) rgba(0, 0, 0, .6);
+}
+.social-card[data-game="resident-evil"]::before { background: rgba(160, 0, 0, .55); }
+.social-card[data-game="resident-evil"]::after {
+  background: repeating-linear-gradient(135deg,
+    transparent 0 calc(9px * var(--s)),
+    rgba(150, 0, 0, .3) calc(9px * var(--s)) calc(11px * var(--s)));
+}
+.social-card[data-game="resident-evil"] .card-deco {
+  background: #b00000;
+  box-shadow: 0 0 calc(8px * var(--s)) rgba(176, 0, 0, .9);
+}
+.social-card[data-game="resident-evil"] .card-platform-icon {
+  border-color: rgba(170, 0, 0, .8);
+  box-shadow: 0 0 calc(14px * var(--s)) rgba(140, 0, 0, .7), inset 0 0 calc(12px * var(--s)) rgba(0, 0, 0, .5);
+  filter: saturate(.75) contrast(1.1);
+}
+.social-card[data-game="resident-evil"] .card-kicker {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+  letter-spacing: .3em;
+  color: #a89a8a;
+}
+.social-card[data-game="resident-evil"] .card-platform,
+.social-card[data-game="resident-evil"] .card-handle {
+  font-family: 'Resident Evil', serif;
+  font-weight: 400;
+  letter-spacing: .04em;
+}
+.social-card[data-game="resident-evil"] .card-platform { color: #e9dfd2; text-shadow: 0 0 calc(6px * var(--s)) rgba(0, 0, 0, .9); }
+.social-card[data-game="resident-evil"] .card-handle {
+  font-size: calc(36px * var(--s));
+  color: #c40000;
+  text-shadow: 0 0 calc(10px * var(--s)) rgba(196, 0, 0, .65);
+  animation: sr-re-flicker 4s steps(1) infinite;
+}
+.social-card[data-game="resident-evil"] .card-divider {
+  background: linear-gradient(180deg, transparent, rgba(170, 0, 0, .6), transparent);
+}
+.social-card[data-game="resident-evil"] .card-follow {
+  font-family: 'Resident Evil', serif;
+  font-weight: 400;
+  letter-spacing: .06em;
+  color: #f2e6d8;
+  background: linear-gradient(180deg, #8a0000, #3a0000);
+  border: calc(1px * var(--s)) solid #b00000;
+  border-radius: calc(4px * var(--s));
+  box-shadow: 0 0 calc(14px * var(--s)) rgba(176, 0, 0, .55), inset 0 calc(-3px * var(--s)) calc(6px * var(--s)) rgba(0, 0, 0, .4);
+}
+@keyframes sr-re-flicker {
+  0%, 100% { opacity: 1; }
+  92%      { opacity: .55; }
+  94%      { opacity: 1; }
+  96%      { opacity: .7; }
+}
+
+/* God of War — carved gold on dark leather, ember glow */
+.social-card[data-game="god-of-war"] {
+  background:
+    radial-gradient(90% 140% at 100% 100%, rgba(170, 40, 15, .35), transparent 60%),
+    linear-gradient(180deg, rgba(28, 21, 16, .96), rgba(12, 9, 7, .97));
+  border: calc(2px * var(--s)) solid #b8924a;
+  box-shadow:
+    0 0 calc(18px * var(--s)) rgba(200, 60, 20, .45),
+    inset 0 0 0 calc(4px * var(--s)) rgba(184, 146, 74, .16),
+    0 calc(8px * var(--s)) calc(30px * var(--s)) rgba(0, 0, 0, .6);
+}
+.social-card[data-game="god-of-war"]::before { background: rgba(217, 178, 106, .4); }
+.social-card[data-game="god-of-war"]::after {
+  background: repeating-linear-gradient(135deg,
+    transparent 0 calc(10px * var(--s)),
+    rgba(184, 146, 74, .22) calc(10px * var(--s)) calc(14px * var(--s)));
+}
+.social-card[data-game="god-of-war"] .card-deco {
+  background: #d9b26a;
+  box-shadow: 0 0 calc(8px * var(--s)) rgba(230, 90, 30, .9);
+}
+.social-card[data-game="god-of-war"] .card-platform-icon {
+  border: calc(2px * var(--s)) solid #d9b26a;
+  box-shadow: 0 0 calc(14px * var(--s)) rgba(200, 60, 20, .55), 0 calc(4px * var(--s)) calc(10px * var(--s)) rgba(0, 0, 0, .5);
+}
+.social-card[data-game="god-of-war"] .card-kicker {
+  font-family: Georgia, 'Times New Roman', serif;
+  letter-spacing: .32em;
+  color: #b8924a;
+}
+.social-card[data-game="god-of-war"] .card-platform,
+.social-card[data-game="god-of-war"] .card-handle {
+  font-family: 'God of War', serif;
+  font-weight: 400;
+  letter-spacing: .03em;
+}
+.social-card[data-game="god-of-war"] .card-platform { color: #f3e7cf; }
+.social-card[data-game="god-of-war"] .card-handle {
+  font-size: calc(34px * var(--s));
+  color: #e2bd72;
+  text-shadow: 0 calc(2px * var(--s)) 0 #3b2a10, 0 0 calc(12px * var(--s)) rgba(230, 80, 30, .55);
+}
+.social-card[data-game="god-of-war"] .card-divider {
+  background: linear-gradient(180deg, transparent, rgba(217, 178, 106, .55), transparent);
+}
+.social-card[data-game="god-of-war"] .card-follow {
+  font-family: 'God of War', serif;
+  font-weight: 400;
+  letter-spacing: .04em;
+  color: #f3e7cf;
+  background: linear-gradient(180deg, #a3170f, #5e0b07);
+  border: calc(2px * var(--s)) solid #d9b26a;
+  border-radius: calc(6px * var(--s));
+  box-shadow: 0 0 calc(16px * var(--s)) rgba(210, 60, 20, .6), inset 0 calc(-3px * var(--s)) calc(6px * var(--s)) rgba(0, 0, 0, .35);
+}
+
+/* Empty state: neutral card, no platform glow */
+.social-card:has(.card-empty) {
+  background: var(--surface-2);
+  border-color: var(--border);
+  box-shadow: none;
+}
+.social-card:has(.card-empty)::before,
+.social-card:has(.card-empty)::after { display: none; }
+
 
 /* ── Rotation animations ──────────────────────────────────── */
 

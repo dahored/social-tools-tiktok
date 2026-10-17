@@ -12,6 +12,7 @@ const DEFAULT_SETTINGS = Object.freeze({
   animation:    'slide',
   borderRadius: 24,
   cardWidth:    480,
+  game:         'default',
 });
 
 async function _ensureFile() {
@@ -52,6 +53,7 @@ async function saveSettings(data) {
     animation:    data.animation,
     borderRadius: data.borderRadius,
     cardWidth:    data.cardWidth,
+    game:         data.game,
   };
   await _write(store);
   return { ...store.users[data.username], username: data.username };

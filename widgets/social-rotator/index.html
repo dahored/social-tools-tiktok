@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Social Rotator — Social Tools TikTok</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap" />
+  <link rel="stylesheet" href="/widgets/shared/game-fonts.css" />
   <link rel="stylesheet" href="/widgets/social-rotator/style.css" />
   <script src="/auth-guard.js"></script>
   <script src="/navbar.js"></script>
@@ -71,6 +75,15 @@
         <!-- Settings panel -->
         <div class="panel">
           <p class="panel-title">Rotation Settings</p>
+          <div class="field" style="margin-bottom:12px">
+            <label for="game">Estilo de juego</label>
+            <select id="game">
+              <option value="default">Neón (por defecto)</option>
+              <option value="gta">GTA</option>
+              <option value="resident-evil">Resident Evil</option>
+              <option value="god-of-war">God of War</option>
+            </select>
+          </div>
           <div class="field">
             <label for="interval">Interval between cards (seconds)</label>
             <input id="interval" type="number" min="2" max="60" value="5" />
@@ -106,7 +119,7 @@
             <button id="copyUrlBtn" class="btn-ghost btn-sm">Copy</button>
           </div>
           <div class="obs-hint">
-            Suggested Browser Source size: <strong>480 × 90 px</strong>
+            Suggested Browser Source size: <strong>(card width + 48) × 160 px</strong> — e.g. 528 × 160 for a 480 px card
           </div>
         </div>
 
