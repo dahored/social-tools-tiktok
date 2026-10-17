@@ -4,3 +4,7 @@ npm-debug.log
 .git
 .gitignore
 data/*.json
+
+video/node_modules
+video/.render
+storage/transitions/*

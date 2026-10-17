@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scene Transition — Social Tools TikTok</title>
+  <link rel="stylesheet" href="/widgets/scene-transition/editor.css" />
+  <script src="/auth-guard.js"></script>
+  <script src="/navbar.js"></script>
+</head>
+<body>
+  <main class="page">
+
+    <header class="page-hd">
+      <nav class="breadcrumb">
+        <a href="/">Widget Hub</a>
+        <span class="sep">/</span>
+        <span class="current">Scene Transition</span>
+      </nav>
+      <div class="page-title">
+        <h1>Scene Transition</h1>
+        <p>Transición de escena con el estilo del juego. Úsala en vivo como Browser Source o descárgala como video para el Stinger de OBS.</p>
+      </div>
+    </header>
+
+    <div class="editor-layout">
+
+      <!-- ── Sidebar ─────────────────────────────────────── -->
+      <aside class="editor-sidebar">
+
+        <div class="panel">
+          <p class="panel-title">Username</p>
+          <div class="username-row">
+            <input id="username" type="text" value="default" placeholder="username" />
+            <button id="loadUserBtn" class="btn-ghost">Load</button>
+          </div>
+          <div class="status-bar">
+            <span class="status-live-dot"></span>
+            <span id="status">Idle</span>
+          </div>
+        </div>
+
+        <div class="panel stack">
+          <p class="panel-title" style="margin-bottom:0">Estilo</p>
+          <div class="field">
+            <label for="game">Juego</label>
+            <select id="game">
+              <option value="default">Default (sin juego)</option>
+              <option value="gta">GTA</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="accent">Color de acento</label>
+            <input id="accent" type="color" value="#ff3c8e" />
+          </div>
+          <div class="field">
+            <label for="soundMode">Sonido</label>
+            <select id="soundMode">
+              <option value="style">Sonido del estilo</option>
+              <option value="custom">Audio personalizado</option>
+              <option value="off">Sin sonido</option>
+            </select>
+          </div>
+          <div id="customSoundFields" class="stack" hidden>
+            <div id="soundInfo" class="logo-preview">Sin audio — sube un MP3, OGG, WAV o M4A</div>
+            <input id="soundFile" type="file" accept="audio/mpeg,audio/ogg,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a,audio/aac,.mp3,.ogg,.wav,.m4a" />
+            <p class="hint">Máx. 5 MB. En OBS se corta a los 6 s; en el video, al final de la transición. Se sube al guardar.</p>
+          </div>
+        </div>
+
+        <div class="panel stack">
+          <p class="panel-title" style="margin-bottom:0">Logo</p>
+          <div class="field">
+            <label for="line2">Texto pequeño (opcional)</label>
+            <input id="line2" type="text" maxlength="32" placeholder="Ej: AHORA JUGANDO" />
+          </div>
+          <div class="field">
+            <label for="line1">Texto grande (opcional)</label>
+            <input id="line1" type="text" maxlength="32" placeholder="Ej: GTA V — vacío = solo el logo" />
+          </div>
+
+          <div class="mode-toggle" role="group" aria-label="Contenido del cuadro">
+            <button type="button" class="btn-ghost" data-mode="text">Inicial del texto</button>
+            <button type="button" class="btn-ghost" data-mode="image">Imagen</button>
+          </div>
+
+          <div id="imageFields" class="stack" hidden>
+            <div id="logoPreview" class="logo-preview">Sin logo — sube un PNG/SVG con fondo transparente</div>
+            <input id="logoFile" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" />
+            <p class="hint">Máx. 2 MB. Se sube al guardar.</p>
+          </div>
+
+          <button id="saveBtn" class="btn-primary">Guardar</button>
+        </div>
+
+      </aside>
+
+      <!-- ── Main column ─────────────────────────────────── -->
+      <div class="editor-main">
+
+        <div class="panel stack">
+          <div class="mode-toggle orientation-toggle" role="group" aria-label="Orientación">
+            <button type="button" class="btn-ghost" data-orientation="horizontal">▭ Horizontal 16:9</button>
+            <button type="button" class="btn-ghost" data-orientation="vertical">▯ Vertical 9:16 (TikTok)</button>
+          </div>
+          <div id="previewWrap" class="preview-frame-wrap">
+            <iframe id="previewFrame" title="Vista previa de la transición"></iframe>
+          </div>
+          <div class="preview-actions">
+            <button id="playBtn" class="btn-primary">▶ Reproducir</button>
+            <button id="playLiveBtn" class="btn-ghost">Reproducir en OBS</button>
+            <p class="hint">La vista previa muestra los cambios sin guardar. "Reproducir en OBS" dispara la versión guardada en todas las Browser Sources abiertas.</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <p class="panel-title">En vivo — Browser Source</p>
+            <p class="hint" style="margin-bottom:10px">Agrega como Browser Source de <strong id="sourceSize">1920×1080</strong> encima de tus escenas.</p>
+            <div class="field">
+              <label for="overlayUrl">URL del overlay</label>
+              <div class="url-row">
+                <input id="overlayUrl" type="text" readonly />
+                <button class="btn-ghost btn-sm" data-copy="overlayUrl">Copy</button>
+              </div>
+            </div>
+            <div class="field" style="margin-top:10px">
+              <label for="playUrl">Disparar (Stream Deck / API)</label>
+              <div class="url-row">
+                <input id="playUrl" type="text" readonly />
+                <button class="btn-ghost btn-sm" data-copy="playUrl">Copy</button>
+              </div>
+            </div>
+            <div class="obs-hint">
+              Truco: con <code>&amp;autoplay=true</code> y la opción <em>"Refresh browser when scene becomes active"</em>, se reproduce sola al entrar a la escena.
+            </div>
+          </div>
+
+          <div class="panel stack">
+            <p class="panel-title" style="margin-bottom:0">Video — Stinger de OBS</p>
+            <div class="download-row">
+              <select id="videoFormat" aria-label="Formato">
+                <option value="webm">WebM (transparente)</option>
+                <option value="mov">MOV ProRes 4444</option>
+              </select>
+              <button id="downloadBtn" class="btn-primary">⬇ Descargar video</button>
+            </div>
+            <p id="renderState" class="hint">Guarda tus cambios y descarga el video listo para OBS.</p>
+            <div id="workerHelp" class="obs-hint" hidden>
+              El servicio de video no responde. Reinicia la app (Docker) e inténtalo de nuevo.
+            </div>
+            <div id="videoList" class="video-list"></div>
+            <div class="obs-hint">
+              En OBS: <em>Scene Transitions → Stinger</em>, usa el archivo o su URL, y pon
+              <strong>Transition Point = <span id="cutPoint">1000</span> ms</strong>.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="/widgets/scene-transition/editor.js"></script>
+</body>
+</html>

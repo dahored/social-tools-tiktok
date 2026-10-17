@@ -19,6 +19,27 @@ services:
     depends_on:
       - mongo
 
+  # Renders scene-transition videos for the editor's "Descargar video" button
+  renderer:
+    build:
+      context: .
+      dockerfile: video/Dockerfile
+    container_name: social-tools-renderer-dev
+    volumes:
+      # live widget/font changes + shared output folder served by the web app
+      - ./widgets:/app/widgets:ro
+      - ./assets:/app/assets:ro
+      - ./video/render-lib.mjs:/app/video/render-lib.mjs:ro
+      - ./video/render-worker.mjs:/app/video/render-worker.mjs:ro
+      - ./storage/transitions:/app/storage/transitions
+    environment:
+      - RENDER_SERVER=http://social-tools-tiktok-web:4050
+    # reload when render-lib / render-worker change
+    command: ["node", "--watch", "render-worker.mjs"]
+    depends_on:
+      - social-tools-tiktok-web
+    restart: unless-stopped
+
   mongo:
     image: mongo:7
     container_name: social-tools-mongo-dev

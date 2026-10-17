@@ -6,9 +6,24 @@ services:
       - "4050:4050"
     volumes:
       - app-data:/app/data
+      - ./storage/transitions:/app/storage/transitions
     restart: unless-stopped
     env_file:
       - .env
+
+  # Renders scene-transition videos for the editor's "Descargar video" button
+  renderer:
+    build:
+      context: .
+      dockerfile: video/Dockerfile
+    container_name: social-tools-renderer
+    volumes:
+      - ./storage/transitions:/app/storage/transitions
+    environment:
+      - RENDER_SERVER=http://social-tools-tiktok-web:4050
+    depends_on:
+      - social-tools-tiktok-web
+    restart: unless-stopped
 
 volumes:
   app-data:

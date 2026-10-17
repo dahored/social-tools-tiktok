@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scene Transition Overlay</title>
+  <link rel="stylesheet" href="../shared/game-fonts.css" />
+  <link rel="stylesheet" href="games/default.css" />
+  <link rel="stylesheet" href="games/gta.css" />
+  <style>
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; }
+    /* 1920×1080 stage scaled to whatever size the browser source has */
+    #stage {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: center;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script src="games/default.js"></script>
+  <script src="games/gta.js"></script>
+</head>
+<body>
+  <div id="stage"></div>
+
+  <script>
+  /* Live OBS overlay. URL params:
+       username=<name>   whose settings to use (default "default")
+       orientation=vertical  1080×1920 (TikTok / Shorts) instead of 1920×1080
+       autoplay=true     play once on load (pair with OBS "Refresh browser when scene becomes active")
+     Triggers: GET /api/scene-transition/play?username=<name> (Stream Deck) or window.playTransition(). */
+  (function () {
+    'use strict';
+
+    var params   = new URLSearchParams(window.location.search);
+    var username = (params.get('username') || 'default').trim() || 'default';
+    var stage    = document.getElementById('stage');
+    var vertical = params.get('orientation') === 'vertical';
+    var W = vertical ? 1080 : 1920;
+    var H = vertical ? 1920 : 1080;
+    stage.style.width  = W + 'px';
+    stage.style.height = H + 'px';
+    var timeline = null;
+    var currentGame = 'default';
+    var soundMode = 'style';   // style | custom | off
+    var customSoundUrl = '';
+    var sfx      = new Audio();
+    sfx.preload  = 'auto';
+    var sfxStop  = null;
+    var MAX_SOUND_SECONDS = 6; // long custom clips are cut so they don't run into the stream
+
+    function soundUrl() {
+      return soundMode === 'custom' && customSoundUrl
+        ? customSoundUrl
+        : '/assets/sounds/transitions/' + currentGame + '.mp3';
+    }
+
+    function fitStage() {
+      var s = Math.min(window.innerWidth / W, window.innerHeight / H);
+      stage.style.transform = 'translate(-50%, -50%) scale(' + s + ')';
+    }
+
+    function toVars(settings) {
+      return {
+        logoMode: settings.logoMode,
+        line1:    settings.line1 || '',
+        line2:    settings.line2 || '',
+        accent:   settings.accent,
+        logoUrl:  settings.logoFile
+          ? '/api/scene-transition/logo/' + encodeURIComponent(username) + '?v=' + encodeURIComponent(settings.updatedAt || '')
+          : '',
+      };
+    }
+
+    /** Rebuilds the transition. Exposed so the editor can preview unsaved changes. */
+    window.setTransition = function (game, vars) {
+      var def = window.SceneTransitions[game] || window.SceneTransitions['default'];
+      if (timeline) timeline.kill();
+      timeline = def.mount(stage, Object.assign({ orientation: vertical ? 'vertical' : 'horizontal' }, vars));
+      currentGame = window.SceneTransitions[game] ? game : 'default';
+      var url = soundUrl();
+      if (sfx.getAttribute('src') !== url) sfx.src = url;
+      return def;
+    };
+
+    window.playTransition = function () {
+      if (!timeline) return;
+      timeline.restart();
+      if (soundMode !== 'off') {
+        sfx.currentTime = 0;
+        sfx.play().catch(function () { /* autoplay blocked outside OBS */ });
+        clearTimeout(sfxStop);
+        sfxStop = setTimeout(function () { sfx.pause(); }, MAX_SOUND_SECONDS * 1000);
+      }
+    };
+
+    /** Parks the transition on a given second (editor uses the fully-covered frame). */
+    window.seekTransition = function (seconds) {
+      if (timeline) timeline.pause(seconds);
+    };
+
+    function applySettings(settings) {
+      soundMode = settings.soundMode || 'style';
+      customSoundUrl = settings.soundFile
+        ? '/api/scene-transition/sound/' + encodeURIComponent(username) + '?v=' + encodeURIComponent(settings.updatedAt || '')
+        : '';
+      window.setTransition(settings.game, toVars(settings));
+    }
+
+    function connect() {
+      if (typeof EventSource === 'undefined') return;
+      var es = new EventSource('/api/scene-transition/stream?username=' + encodeURIComponent(username));
+      es.onmessage = function (event) {
+        try {
+          var msg = JSON.parse(event.data);
+          if (msg.type === 'play') window.playTransition();
+          else if (msg.type === 'settings') applySettings(msg.settings);
+        } catch (e) { /* ignore malformed message */ }
+      };
+    }
+
+    fitStage();
+    window.addEventListener('resize', fitStage);
+
+    // Inside the editor the parent drives the preview (and plays the sound itself)
+    if (params.get('editor') === 'true') {
+      soundMode = 'off';
+      return;
+    }
+
+    fetch('/api/scene-transition?username=' + encodeURIComponent(username))
+      .then(function (res) { return res.json(); })
+      .then(function (settings) {
+        applySettings(settings);
+        if (params.get('autoplay') === 'true') {
+          (document.fonts ? document.fonts.ready : Promise.resolve()).then(window.playTransition);
+        }
+      })
+      .catch(function () { window.setTransition('default', {}); });
+
+    connect();
+  })();
+  </script>
+</body>
+</html>

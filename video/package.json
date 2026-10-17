@@ -1,0 +1,17 @@
+{
+  "name": "social-tools-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Renders widget animations (scene transitions) to video with HyperFrames. Runs on the host, not in Docker (needs Node >= 22, Chrome and FFmpeg).",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "render": "node render-transition.mjs",
+    "worker": "node render-worker.mjs"
+  },
+  "dependencies": {
+    "hyperframes": "0.8.166"
+  }
+}

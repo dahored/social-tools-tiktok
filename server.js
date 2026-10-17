@@ -11,17 +11,23 @@ const authRoutes          = require('./routes/auth.routes');
 const usersRoutes         = require('./routes/users.routes');
 const counterRoutes       = require('./routes/counter.routes');
 const socialRotatorRoutes = require('./routes/social-rotator.routes');
+const sceneTransitionRoutes = require('./routes/scene-transition.routes');
+const sceneTransitionService = require('./src/services/scene-transition.service');
 
 const app = express();
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors());
+// Logo / sound uploads arrive as base64 data URLs — allow larger bodies on those routes only
+app.use('/api/scene-transition/logo', express.json({ limit: '3mb' }));
+app.use('/api/scene-transition/sound', express.json({ limit: '8mb' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ── Static assets ─────────────────────────────────────────────────────────────
 app.use('/assets',  express.static(path.join(__dirname, 'assets')));
 app.use('/widgets', express.static(path.join(__dirname, 'widgets')));
+app.use('/media/transitions', express.static(sceneTransitionService.VIDEO_DIR));
 app.use(express.static(path.join(__dirname, 'web')));
 
 // ── Health check ──────────────────────────────────────────────────────────────
@@ -39,6 +45,7 @@ app.use('/auth',                authRoutes);
 app.use('/users',               usersRoutes);
 app.use('/api/counter',         counterRoutes);
 app.use('/api/social-rotator',  socialRotatorRoutes);
+app.use('/api/scene-transition', sceneTransitionRoutes);
 
 // ── SPA fallback ──────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
