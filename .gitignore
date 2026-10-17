@@ -1,3 +1,7 @@
 .DS_Store
 data/
 node_modules/
+storage/transitions/*
+!storage/transitions/.gitkeep
+video/.render/
+.env
