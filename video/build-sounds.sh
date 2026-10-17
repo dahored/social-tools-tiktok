@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Builds the soundtrack of each scene transition (assets/sounds/transitions/<game>.mp3).
+# Builds the soundtrack of each scene transition (assets/sounds/transitions/<game>.mp3)
+# and the chat overlay message sounds (assets/sounds/chat/<style>.mp3).
 # Cue times match the GSAP timelines in widgets/scene-transition/games/<game>.js.
 # Sources: Kenney CC0 packs (assets/sounds/kenney, see License.txt) + whooshes
 # synthesised here from filtered noise. Requires ffmpeg. Re-run after changing cues.
@@ -58,3 +59,16 @@ mix "$OUT/default.mp3" 2.0 \
   "$K/jingles_HIT03.ogg:0.42:0.7" \
   "$TMP/whoosh-out.wav:1.33:2.2"
 
+# ── Chat overlay: one short sound per incoming message ────────────────
+CHAT=assets/sounds/chat
+mkdir -p "$CHAT"
+OUT=$CHAT
+
+# Default: friendly two-note ding
+mix "$CHAT/default.mp3" 0.45 \
+  "$K/confirmation_001.ogg:0.00:0.9"
+
+# GTA: crisp "phone text" glint + a quick Vice City sax lick
+mix "$CHAT/gta.mp3" 0.6 \
+  "$K/glass_002.ogg:0.00:1.0" \
+  "$K/jingles_SAX09.ogg:0.03:1.4"

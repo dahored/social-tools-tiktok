@@ -1,0 +1,109 @@
+/* ── GTA: Vice City sunset — purple glass, VI gradient, chunky lettering ── */
+
+.style-gta .chat { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+
+.style-gta .msg {
+  padding: .5em .8em .6em .6em;
+  border-radius: .7em;
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgba(255, 140, 120, .22), transparent 55%),
+    linear-gradient(135deg, rgba(42, 17, 64, .93), rgba(74, 28, 96, .88));
+  border: 2px solid rgba(255, 255, 255, .14);
+  box-shadow: 0 .4em 1.1em rgba(20, 5, 35, .5);
+  color: #fff;
+  overflow: hidden;
+  animation: chat-gta-in .45s cubic-bezier(.2, .9, .3, 1.25) both;
+}
+
+/* VI gradient bar on the left edge */
+.style-gta .msg::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: .28em;
+  background: linear-gradient(180deg, #8ea4ff, #c56ae0 35%, #ff5f9e 65%, #ffb45c);
+}
+
+/* Little striped sunset in the corner */
+.style-gta .msg::after {
+  content: '';
+  position: absolute;
+  right: -.9em;
+  top: -.9em;
+  width: 3.2em;
+  height: 3.2em;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #ffe39a, #ffb35c 40%, #ff6f91 75%, #c552b0);
+  -webkit-mask-image: linear-gradient(180deg, #000 50%, transparent 50% 57%, #000 57% 68%, transparent 68% 74%, #000 74%);
+          mask-image: linear-gradient(180deg, #000 50%, transparent 50% 57%, #000 57% 68%, transparent 68% 74%, #000 74%);
+  opacity: .28;
+  pointer-events: none;
+}
+
+/* Platform logo in a tile with the VI gradient frame */
+.style-gta .msg-icon {
+  width: 1.75em;
+  height: 1.75em;
+  padding: .12em;
+  margin-left: .2em;
+  border-radius: .45em;
+  background: linear-gradient(160deg, #6f8bff, #b45ce0 38%, #ff5f9e 68%, #ffb05a);
+  box-sizing: border-box;
+  box-shadow: 0 .15em .4em rgba(20, 5, 35, .5);
+}
+.style-gta .msg-icon-inner {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding: .22em;
+  box-sizing: border-box;
+  border-radius: .34em;
+  background: var(--platform);
+  color: var(--platform-fg);
+}
+
+.style-gta .msg-name {
+  font-family: 'GTA', sans-serif;
+  font-weight: 400;
+  font-size: 1em;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  line-height: 1.05;
+  background: linear-gradient(180deg, #b6c4ff 0%, #d991ee 35%, #ff7ab0 65%, #ffc477 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 .06em 0 rgba(20, 5, 35, .8));
+}
+
+.style-gta .msg-text {
+  font-size: .88em;
+  font-weight: 600;
+  margin-top: .12em;
+  text-shadow: 0 .06em .2em rgba(20, 5, 35, .6);
+}
+
+.style-gta .msg-role {
+  color: #2a1140;
+  background: #fff;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  box-shadow: .12em .12em 0 #ff5f9e;
+  transform: skewX(-8deg);
+}
+.style-gta .role-broadcaster { background: #ffd27a; }
+.style-gta .role-moderator   { background: #8ff0c0; }
+.style-gta .role-vip         { background: #ffb3d6; }
+.style-gta .role-subscriber  { background: #c9b6ff; }
+
+.style-gta .msg.is-leaving { animation: chat-gta-out .45s ease-in forwards; }
+
+@keyframes chat-gta-in {
+  0%   { opacity: 0; transform: translateX(-2.5em) skewX(-10deg); }
+  60%  { opacity: 1; transform: translateX(.3em) skewX(2deg); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes chat-gta-out {
+  to { opacity: 0; transform: translateX(-3em) skewX(-10deg); }
+}

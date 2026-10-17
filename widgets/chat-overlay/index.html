@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat Overlay — Social Tools TikTok</title>
+  <link rel="stylesheet" href="/widgets/chat-overlay/editor.css" />
+  <script src="/auth-guard.js"></script>
+  <script src="/navbar.js"></script>
+  <script src="/widgets/shared/platform-icons.js"></script>
+</head>
+<body>
+  <main class="page">
+
+    <header class="page-hd">
+      <nav class="breadcrumb">
+        <a href="/">Widget Hub</a>
+        <span class="sep">/</span>
+        <span class="current">Chat Overlay</span>
+      </nav>
+      <div class="page-title">
+        <h1>Chat Overlay</h1>
+        <p>Une el chat de Twitch, Kick, YouTube y TikTok en un solo overlay, sin iniciar sesión. Escribe tus canales y copia la URL para OBS.</p>
+      </div>
+    </header>
+
+    <div class="editor-layout">
+
+      <aside class="editor-sidebar">
+
+        <div class="panel">
+          <p class="panel-title">Username</p>
+          <div class="username-row">
+            <input id="username" type="text" value="default" placeholder="username" />
+            <button id="loadUserBtn" class="btn-ghost">Load</button>
+          </div>
+          <div class="status-bar">
+            <span class="status-live-dot"></span>
+            <span id="status">Idle</span>
+          </div>
+        </div>
+
+        <div class="panel stack">
+          <p class="panel-title" style="margin-bottom:0">Canales</p>
+          <div id="channelFields" class="stack"></div>
+          <p class="hint">Twitch, Kick y TikTok: tu usuario. YouTube: tu @handle, la URL del canal o la del directo.</p>
+          <p class="hint">TikTok es no oficial y el más inestable: si falla, se reintenta solo.</p>
+          <p class="hint">Facebook usa la API oficial: se conecta una vez con tu cuenta (solo Páginas).</p>
+        </div>
+
+        <div class="panel stack">
+          <p class="panel-title" style="margin-bottom:0">Estilo</p>
+          <div class="field">
+            <label for="style">Juego</label>
+            <select id="style">
+              <option value="default">Default</option>
+              <option value="gta">GTA</option>
+            </select>
+          </div>
+          <div class="grid-3">
+            <div class="field">
+              <label for="fontSize">Tamaño</label>
+              <input id="fontSize" type="number" min="12" max="72" value="26" />
+            </div>
+            <div class="field">
+              <label for="maxMessages">Mensajes</label>
+              <input id="maxMessages" type="number" min="1" max="30" value="8" />
+            </div>
+            <div class="field">
+              <label for="hideAfter">Ocultar (s)</label>
+              <input id="hideAfter" type="number" min="0" max="600" value="0" title="0 = no se ocultan" />
+            </div>
+          </div>
+          <p class="hint">Ocultar = segundos que se queda cada mensaje (0 = hasta que lo empujen los nuevos).</p>
+
+          <div class="field">
+            <label for="sound">Sonido al llegar un mensaje</label>
+            <select id="sound">
+              <option value="style">Sonido del estilo</option>
+              <option value="custom">Audio personalizado</option>
+              <option value="off">Sin sonido</option>
+            </select>
+          </div>
+          <div id="soundOptions" class="stack">
+            <div class="grid-2 sound-grid">
+              <div class="field">
+                <label for="soundVolume">Volumen <span id="soundVolumeValue">60</span>%</label>
+                <input id="soundVolume" type="range" min="0" max="100" step="5" value="60" />
+              </div>
+              <div class="field">
+                <label for="soundCooldown">Pausa mínima (s)</label>
+                <input id="soundCooldown" type="number" min="0" max="30" step="0.5" value="1" title="Evita que suene en cada mensaje si el chat va muy rápido" />
+              </div>
+            </div>
+            <div id="customSoundFields" class="stack" hidden>
+              <div id="soundInfo" class="sound-info">Sin audio — sube un MP3, OGG, WAV o M4A corto</div>
+              <input id="soundFile" type="file" accept="audio/mpeg,audio/ogg,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a,audio/aac,.mp3,.ogg,.wav,.m4a" />
+              <p class="hint">Máx. 2 MB. Mejor si dura menos de 1 segundo. Se sube al guardar.</p>
+            </div>
+            <button type="button" id="soundTestBtn" class="btn-ghost btn-sm">🔊 Escuchar</button>
+          </div>
+
+          <button id="saveBtn" class="btn-primary">Guardar</button>
+        </div>
+
+      </aside>
+
+      <div class="editor-main">
+
+        <div class="panel stack">
+          <div class="preview-frame-wrap">
+            <iframe id="previewFrame" title="Vista previa del chat"></iframe>
+          </div>
+          <div class="test-row" id="testRow">
+            <p class="hint">Mensajes de prueba para ver el estilo sin esperar al chat:</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="panel-title">OBS Browser Source</p>
+          <p class="hint" style="margin-bottom:10px">Agrégalo como Browser Source (por ejemplo <strong>500×800</strong>). El fondo es transparente y los mensajes crecen desde abajo.</p>
+          <div class="url-row">
+            <input id="overlayUrl" type="text" readonly />
+            <button id="copyUrlBtn" class="btn-ghost btn-sm">Copy</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="/widgets/chat-overlay/editor.js"></script>
+</body>
+</html>

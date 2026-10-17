@@ -12,6 +12,7 @@ const usersRoutes         = require('./routes/users.routes');
 const counterRoutes       = require('./routes/counter.routes');
 const socialRotatorRoutes = require('./routes/social-rotator.routes');
 const sceneTransitionRoutes = require('./routes/scene-transition.routes');
+const chatOverlayRoutes = require('./routes/chat-overlay.routes');
 const sceneTransitionService = require('./src/services/scene-transition.service');
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(cors());
 // Logo / sound uploads arrive as base64 data URLs — allow larger bodies on those routes only
 app.use('/api/scene-transition/logo', express.json({ limit: '3mb' }));
 app.use('/api/scene-transition/sound', express.json({ limit: '8mb' }));
+app.use('/api/chat-overlay/sound', express.json({ limit: '4mb' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -46,6 +48,7 @@ app.use('/users',               usersRoutes);
 app.use('/api/counter',         counterRoutes);
 app.use('/api/social-rotator',  socialRotatorRoutes);
 app.use('/api/scene-transition', sceneTransitionRoutes);
+app.use('/api/chat-overlay',     chatOverlayRoutes);
 
 // ── SPA fallback ──────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {

@@ -1,0 +1,46 @@
+/* ── Default: clean dark glass, platform-coloured accent ─────────────── */
+
+.style-default .chat { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+
+.style-default .msg {
+  padding: .5em .75em .55em .55em;
+  border-radius: .6em;
+  background: rgba(12, 14, 22, .8);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-left: .2em solid var(--platform-accent, var(--platform));
+  box-shadow: 0 .35em 1em rgba(0, 0, 0, .35);
+  color: #eef0f6;
+  animation: chat-default-in .4s cubic-bezier(.2, .9, .3, 1.2) both;
+}
+
+.style-default .msg-icon {
+  width: 1.45em;
+  height: 1.45em;
+  border-radius: 50%;
+  background: var(--platform);
+  color: var(--platform-fg);
+  box-shadow: 0 0 .6em color-mix(in srgb, var(--platform-accent, var(--platform)) 55%, transparent);
+}
+.style-default .msg--tiktok .msg-icon { padding: .3em; box-sizing: border-box; }
+.style-default .msg--youtube .msg-icon,
+.style-default .msg--kick .msg-icon { padding: .28em; box-sizing: border-box; }
+.style-default .msg--twitch .msg-icon { padding: .3em; box-sizing: border-box; }
+
+.style-default .msg-name { color: var(--user-color, #fff); font-size: .85em; }
+.style-default .msg-text { font-size: .9em; font-weight: 500; margin-top: .05em; }
+
+.style-default .msg-role { color: #fff; background: rgba(255, 255, 255, .15); }
+.style-default .role-broadcaster { background: #e5484d; }
+.style-default .role-moderator   { background: #30a46c; }
+.style-default .role-vip         { background: #d6409f; }
+.style-default .role-subscriber  { background: #6e56cf; }
+
+.style-default .msg.is-leaving { animation: chat-default-out .4s ease forwards; }
+
+@keyframes chat-default-in {
+  from { opacity: 0; transform: translateY(1em) scale(.96); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes chat-default-out {
+  to { opacity: 0; transform: translateX(-1.5em); }
+}
