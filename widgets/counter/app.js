@@ -3,6 +3,7 @@ const FONT_MAP = {
   "resident-evil":
     "'Resident Evil', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   "god-of-war": "'God of War', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+  gta: "'GTA', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
 };
 
 const state = {
@@ -51,6 +52,21 @@ const testIncreaseBtn = document.getElementById("testIncreaseBtn");
 const testDecreaseBtn = document.getElementById("testDecreaseBtn");
 const testResetBtn = document.getElementById("testResetBtn");
 let stream = null;
+// True while the appearance form has unsaved edits — live updates must not overwrite them.
+let formDirty = false;
+
+const appearanceInputs = [
+  labelInput,
+  countColorInput,
+  labelColorInput,
+  fontSelect,
+  letterSpacingInput,
+  wordSpacingInput,
+  countFontSizeInput,
+  labelFontSizeInput,
+  countShadowToggle,
+  labelShadowToggle,
+];
 
 function setStatus(text) {
   if (statusEl) {
@@ -141,28 +157,58 @@ function normalizeUsername(raw) {
   return sanitized || "default";
 }
 
-function applyState() {
+function readAppearanceForm() {
+  return {
+    label: labelInput.value,
+    countColor: countColorInput.value,
+    labelColor: labelColorInput.value,
+    fontType: fontSelect.value,
+    letterSpacing: Number(letterSpacingInput.value),
+    wordSpacing: Number(wordSpacingInput.value),
+    countFontSize: Number(countFontSizeInput.value),
+    labelFontSize: Number(labelFontSizeInput.value),
+    countTextShadow: countShadowToggle.checked,
+    labelTextShadow: labelShadowToggle.checked,
+  };
+}
+
+function renderCounter(look) {
   countEl.textContent = state.count;
-  labelEl.textContent = state.label;
-  countEl.style.color = state.countColor;
-  labelEl.style.color = state.labelColor;
-  countEl.style.letterSpacing = state.letterSpacing + "px";
-  labelEl.style.letterSpacing = state.letterSpacing + "px";
-  countEl.style.wordSpacing = state.wordSpacing + "px";
-  labelEl.style.wordSpacing = state.wordSpacing + "px";
-  countEl.style.fontSize = state.countFontSize + "px";
-  labelEl.style.fontSize = state.labelFontSize + "px";
-  countEl.style.textShadow = state.countTextShadow
-    ? `0 0 18px ${hexToRgba(state.countColor, 0.65)}`
+  labelEl.textContent = look.label;
+  countEl.style.color = look.countColor;
+  labelEl.style.color = look.labelColor;
+  countEl.style.letterSpacing = look.letterSpacing + "px";
+  labelEl.style.letterSpacing = look.letterSpacing + "px";
+  countEl.style.wordSpacing = look.wordSpacing + "px";
+  labelEl.style.wordSpacing = look.wordSpacing + "px";
+  countEl.style.fontSize = look.countFontSize + "px";
+  labelEl.style.fontSize = look.labelFontSize + "px";
+  countEl.style.textShadow = look.countTextShadow
+    ? `0 0 18px ${hexToRgba(look.countColor, 0.65)}`
     : "none";
-  labelEl.style.textShadow = state.labelTextShadow
-    ? `0 0 14px ${hexToRgba(state.labelColor, 0.65)}`
+  labelEl.style.textShadow = look.labelTextShadow
+    ? `0 0 14px ${hexToRgba(look.labelColor, 0.65)}`
     : "none";
 
-  const family = FONT_MAP[state.fontType] || FONT_MAP.basic;
+  const family = FONT_MAP[look.fontType] || FONT_MAP.basic;
   countEl.style.fontFamily = family;
   labelEl.style.fontFamily = family;
+  countEl.parentElement.setAttribute("data-game", look.fontType);
+}
 
+function applyState() {
+  if (formDirty) {
+    // Keep the user's unsaved edits in the form and preview; only the count changes.
+    renderCounter(readAppearanceForm());
+  } else {
+    renderCounter(state);
+    syncAppearanceForm();
+  }
+
+  updateLinks();
+}
+
+function syncAppearanceForm() {
   labelInput.value = state.label;
   countColorInput.value = state.countColor;
   labelColorInput.value = state.labelColor;
@@ -173,7 +219,9 @@ function applyState() {
   labelFontSizeInput.value = state.labelFontSize;
   countShadowToggle.checked = Boolean(state.countTextShadow);
   labelShadowToggle.checked = Boolean(state.labelTextShadow);
+}
 
+function updateLinks() {
   const increasePageUrl = buildActionUrl("increase");
   const decreasePageUrl = buildActionUrl("decrease");
   const resetPageUrl = buildActionUrl("reset");
@@ -250,19 +298,7 @@ async function changeCounter(action) {
 
 async function saveSettings() {
   setStatus("Saving...");
-  const payload = {
-    username: state.username,
-    label: labelInput.value,
-    countColor: countColorInput.value,
-    labelColor: labelColorInput.value,
-    fontType: fontSelect.value,
-    letterSpacing: Number(letterSpacingInput.value),
-    wordSpacing: Number(wordSpacingInput.value),
-    countFontSize: Number(countFontSizeInput.value),
-    labelFontSize: Number(labelFontSizeInput.value),
-    countTextShadow: countShadowToggle.checked,
-    labelTextShadow: labelShadowToggle.checked,
-  };
+  const payload = { username: state.username, ...readAppearanceForm() };
 
   const data = await api("/api/counter/settings", {
     method: "POST",
@@ -270,6 +306,7 @@ async function saveSettings() {
     body: JSON.stringify(payload),
   });
 
+  formDirty = false;
   applyResponse(data);
   setStatus("Saved settings for @" + state.username);
 }
@@ -308,8 +345,19 @@ function connectStream() {
   };
 }
 
+appearanceInputs.forEach((input) => {
+  const onEdit = () => {
+    formDirty = true;
+    renderCounter(readAppearanceForm());
+    setStatus("Unsaved changes — click Save Settings");
+  };
+  input.addEventListener("input", onEdit);
+  input.addEventListener("change", onEdit);
+});
+
 document.getElementById("loadUserBtn").addEventListener("click", async () => {
   state.username = normalizeUsername(usernameInput.value);
+  formDirty = false;
   await loadCounter();
   connectStream();
 });

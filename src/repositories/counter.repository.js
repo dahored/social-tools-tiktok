@@ -5,7 +5,7 @@ const path = require('path');
 const env  = require('../config/env');
 
 const DATA_FILE  = path.join(env.dataDir, 'counter-state.json');
-const FONT_TYPES = new Set(['basic', 'resident-evil', 'god-of-war']);
+const FONT_TYPES = new Set(['basic', 'resident-evil', 'god-of-war', 'gta']);
 
 const DEFAULT_STATE = Object.freeze({
   count:           0,

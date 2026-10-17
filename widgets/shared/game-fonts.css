@@ -1,0 +1,28 @@
+/* Game fonts shared by every widget. Paths are relative so they also resolve
+   inside the HyperFrames render project (video/render-transition.mjs). */
+
+@font-face {
+  font-family: 'Resident Evil';
+  src: url('../../assets/fonts/resident_evil_font/resident_evil_film.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'God of War';
+  src: url('../../assets/fonts/god_of_war_font/berserker-regular-font/Berserker-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+/* GTA style uses Anton (SIL Open Font License, see assets/fonts/anton/OFL.txt).
+   Pricedown's free licence is desktop-only and forbids webfont use. */
+@font-face {
+  font-family: 'GTA';
+  src: url('../../assets/fonts/anton/Anton-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
