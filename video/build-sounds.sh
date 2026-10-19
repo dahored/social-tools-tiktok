@@ -87,3 +87,31 @@ mix "$ALERTS/gta.mp3" 2.4 \
 mix "$ALERTS/default.mp3" 1.6 \
   "$K/jingles_HIT15.ogg:0.00:1.0" \
   "$K/glass_002.ogg:0.05:0.7"
+
+# ── Alert sound packs (assets/sounds/alerts/packs/<pack>/<type>.mp3) ─────────
+# One instrument per pack (cohesive), a DIFFERENT melody per event. Rising
+# jingles go to the big events; all clips are loudness-normalised.
+J=assets/sounds/kenney/jingles
+NORM="loudnorm=I=-17:TP=-1.5:LRA=11"
+
+clip() { # <src> <out>
+  ffmpeg -v error -y -i "$1" -af "silenceremove=start_periods=1:start_threshold=-50dB,apad=pad_dur=0.15,$NORM,aformat=sample_rates=48000:channel_layouts=stereo" \
+    -c:a libmp3lame -q:a 3 "$2"
+}
+
+# pack <name> <donation> <raid> <gift_sub> <subscription> <follow> <share> <like>
+pack() {
+  local dir=assets/sounds/alerts/packs/$1; shift
+  mkdir -p "$dir"
+  local i=0
+  for t in donation raid gift_sub subscription follow share like; do
+    i=$((i+1)); clip "$J/jingles_${!i}.ogg" "$dir/$t.mp3"
+  done
+  echo "built pack $(basename "$dir")"
+}
+
+pack tropical  STEEL12 STEEL03 STEEL13 STEEL10 STEEL09 STEEL04 STEEL08   # steel drums — GTA default
+pack sax       SAX02   SAX03   SAX12   SAX15   SAX10   SAX13   SAX05     # Vice City sax
+pack pizzicato PIZZI12 PIZZI03 PIZZI02 PIZZI15 PIZZI10 PIZZI06 PIZZI13   # playful strings — Neon default
+pack arcade    NES12   NES05   NES08   NES03   NES06   NES09   NES01     # 8-bit
+pack impacto   HIT11   HIT15   HIT10   HIT09   HIT03   HIT05   HIT01     # orchestral hits

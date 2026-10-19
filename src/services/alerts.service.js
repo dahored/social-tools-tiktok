@@ -13,6 +13,7 @@ const VALID_STYLES = new Set(['default', 'gta']);
 const TYPES = Object.keys(repo.DEFAULT_SETTINGS.types);
 const PLATFORMS = new Set(['twitch', 'kick', 'youtube', 'tiktok', 'facebook', 'x']);
 const SOUND_MODES = new Set(['style', 'custom', 'off']);
+const SOUND_PACKS = new Set(['auto', 'tropical', 'sax', 'pizzicato', 'arcade', 'impacto', 'clasico']);
 const SOUND_TYPES = {
   'audio/mpeg': 'mp3', 'audio/mp3': 'mp3', 'audio/ogg': 'ogg', 'audio/wav': 'wav', 'audio/x-wav': 'wav',
   'audio/wave': 'wav', 'audio/mp4': 'm4a', 'audio/x-m4a': 'm4a', 'audio/aac': 'm4a', 'audio/webm': 'webm',
@@ -29,6 +30,7 @@ async function saveSettings(data) {
   const patch = {};
   if (VALID_STYLES.has(data.style)) patch.style = data.style;
   if (data.size === 'large' || data.size === 'compact') patch.size = data.size;
+  if (SOUND_PACKS.has(data.soundPack)) patch.soundPack = data.soundPack;
   if (data.sound === 'style' || data.sound === 'off') patch.sound = data.sound;
   if (Number.isFinite(Number(data.duration)))      patch.duration = num(data.duration, 2, 30);
   if (Number.isFinite(Number(data.volume)))        patch.volume = num(data.volume, 0, 100);

@@ -14,7 +14,7 @@
     style: 'default', duration: 6, sound: 'style', volume: 70,
     types: { donation: true, subscription: true, gift_sub: true, follow: true, raid: true, share: true, like: true },
     likeMilestone: 1000, minBits: 1, minDiamonds: 1, showMessage: true,
-    sounds: {}, size: 'large',
+    sounds: {}, size: 'large', soundPack: 'auto',
   };
   var queue = [];
   var busy = false;
@@ -268,7 +268,9 @@
     if (entry.mode === 'custom' && entry.file) {
       return '/api/alerts/sound/' + encodeURIComponent(username) + '/' + type + '?v=' + encodeURIComponent(entry.file + (s.updatedAt || ''));
     }
-    return '/assets/sounds/alerts/' + (s.style === 'gta' ? 'gta' : 'default') + '.mp3';
+    var pack = s.soundPack && s.soundPack !== 'auto' ? s.soundPack : (s.style === 'gta' ? 'tropical' : 'pizzicato');
+    if (pack === 'clasico') return '/assets/sounds/alerts/' + (s.style === 'gta' ? 'gta' : 'default') + '.mp3';
+    return '/assets/sounds/alerts/packs/' + pack + '/' + type + '.mp3';
   }
 
   function playSound(alert) {

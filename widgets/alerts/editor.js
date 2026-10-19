@@ -140,6 +140,7 @@ function readForm() {
   return {
     style:         $('style').value,
     size:          $('size').value,
+    soundPack:     $('soundPack').value,
     duration:      Number($('duration').value),
     sound:         $('sound').value,
     volume:        Number($('volume').value),
@@ -172,6 +173,7 @@ function applySettings(s) {
   $('username').value      = state.username;
   $('style').value         = s.style;
   $('size').value          = s.size || 'large';
+  $('soundPack').value     = s.soundPack || 'auto';
   $('duration').value      = s.duration;
   $('sound').value         = s.sound;
   $('volume').value        = s.volume;
