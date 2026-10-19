@@ -797,3 +797,15 @@ code {
 @media (max-width: 720px) {
   .editor-layout { grid-template-columns: 1fr; }
 }
+
+/* ── Accounts from "Mis canales" ─────────────────────────── */
+.acct-toggle { display: inline-flex; margin: 0; cursor: pointer; }
+.acct-toggle input { width: 16px; height: 16px; min-height: 0; accent-color: #2563eb; }
+.acct-move {
+  flex-shrink: 0; width: 26px; height: 26px; min-height: 26px; padding: 0;
+  border-radius: 8px; font-size: 0.8rem; background: var(--surface-3); border: 1px solid var(--border); color: var(--text-2);
+}
+.acct-move:disabled { opacity: .35; cursor: default; }
+.account-item.is-hidden .acct-icon, .account-item.is-hidden .acct-info { opacity: .45; }
+.account-item.is-missing .acct-icon, .account-item.is-missing .acct-info { opacity: .3; }
+.channels-link { display: inline-block; margin-top: 10px; color: var(--tt-cyan); text-decoration: none; font-size: 0.82rem; font-weight: 600; }

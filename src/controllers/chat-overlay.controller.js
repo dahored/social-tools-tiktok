@@ -102,12 +102,12 @@ async function facebookCallback(req, res) {
   } catch (err) {
     message = err.message;
   }
-  const back = `/widgets/chat-overlay/index.html?username=${encodeURIComponent(username)}`;
+  const back = `/channels.html?username=${encodeURIComponent(username)}`;
   res.type('html').send(`<!doctype html><meta charset="utf-8"><title>Facebook</title>
 <body style="font-family:system-ui;background:#0a0a0f;color:#f0f0f5;display:grid;place-items:center;height:100vh;margin:0">
 <div style="text-align:center;max-width:420px;padding:24px">
 <p style="font-size:1.1rem">${ok ? '✅' : '⚠️'} ${escapeHtml(message)}</p>
-<p><a style="color:#00f2ea" href="${back}">Volver al editor</a></p></div>
+<p><a style="color:#00f2ea" href="${back}">Volver a Mis canales</a></p></div>
 <script>
   if (window.opener) {
     window.opener.postMessage({ type: 'facebook-connected', ok: ${ok}, message: ${JSON.stringify(message)} }, window.location.origin);

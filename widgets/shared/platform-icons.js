@@ -3,6 +3,12 @@
 (function () {
   'use strict';
   window.PLATFORM_ICONS = {
+    streamelements: {
+      name: 'StreamElements',
+      color: '#2a2b5a',
+      fg: '#ffffff',
+      svg: '<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2 3 7v10l9 5 9-5V7l-9-5zm0 3.2 6 3.3v7l-6 3.3-6-3.3v-7l6-3.3zm-2.4 4.1v5.4l4.8-2.7-4.8-2.7z"/></svg>',
+    },
     twitch: {
       name: 'Twitch',
       color: '#9146FF',

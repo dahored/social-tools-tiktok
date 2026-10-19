@@ -7,7 +7,9 @@ const env  = require('../config/env');
 const DATA_FILE = path.join(env.dataDir, 'social-rotator.json');
 
 const DEFAULT_SETTINGS = Object.freeze({
-  accounts:     [],
+  accounts:     [],     // legacy: accounts now come from "Mis canales"; kept to seed the order
+  order:        null,   // platform display order (null = derive from legacy accounts)
+  hidden:       [],     // platforms not shown on this widget
   interval:     5,
   animation:    'slide',
   borderRadius: 24,
@@ -48,7 +50,9 @@ async function getSettings(username) {
 async function saveSettings(data) {
   const store = await _read();
   store.users[data.username] = {
-    accounts:     data.accounts,
+    ...(store.users[data.username] || {}),
+    order:        data.order,
+    hidden:       data.hidden,
     interval:     data.interval,
     animation:    data.animation,
     borderRadius: data.borderRadius,

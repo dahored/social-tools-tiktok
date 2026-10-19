@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mis canales — Social Tools TikTok</title>
+  <link rel="stylesheet" href="/channels.css" />
+  <script src="/auth-guard.js"></script>
+  <script src="/navbar.js"></script>
+  <script src="/widgets/shared/platform-icons.js"></script>
+</head>
+<body>
+  <main class="page">
+
+    <header class="page-hd">
+      <nav class="breadcrumb">
+        <a href="/">Widget Hub</a>
+        <span class="sep">/</span>
+        <span class="current">Mis canales</span>
+      </nav>
+      <div class="page-title">
+        <h1>Mis canales</h1>
+        <p>Tus cuentas en cada red, en un solo lugar. El Chat, las Alertas y el Social Rotator las usan automáticamente.</p>
+      </div>
+    </header>
+
+    <div class="channels-layout">
+
+      <div class="panel">
+        <p class="panel-title">Username</p>
+        <div class="username-row">
+          <input id="username" type="text" value="default" placeholder="username" />
+          <button id="loadUserBtn" class="btn-ghost">Load</button>
+        </div>
+        <div class="status-bar">
+          <span class="status-live-dot"></span>
+          <span id="status">Idle</span>
+        </div>
+      </div>
+
+      <div class="panel stack">
+        <p class="panel-title" style="margin-bottom:0">Cuentas</p>
+        <div id="channelFields" class="stack"></div>
+        <button id="saveBtn" class="btn-primary">Guardar</button>
+        <p class="hint">El estado indica si el chat/alertas están conectados a tu directo (se conectan solos al abrir un overlay).</p>
+      </div>
+
+      <div class="panel stack">
+        <p class="panel-title" style="margin-bottom:0">StreamElements (X, tips y follows de Twitch)</p>
+        <div id="seList" class="se-list"></div>
+        <div class="field">
+          <label for="seToken">Pegar JWT Token de un canal</label>
+          <div class="url-row">
+            <input id="seToken" type="password" placeholder="eyJhbGciOi…" autocomplete="off" />
+            <button id="seAddBtn" class="btn-ghost btn-sm">Agregar</button>
+          </div>
+        </div>
+        <p class="hint">En StreamElements → tu canal → <strong>JWT Token</strong> (icono de copiar). Agrega uno por canal (por ejemplo el de X). El token se guarda solo en tu servidor.</p>
+      </div>
+
+      <div class="panel stack">
+        <p class="panel-title" style="margin-bottom:0">Facebook en vivo (chat y alertas)</p>
+        <div class="channel-field">
+          <label>
+            <span class="channel-logo" id="fbLogo"></span>Página conectada
+            <span class="channel-state" id="state-facebook" data-state="off">Sin configurar</span>
+          </label>
+          <div id="fbBody" class="fb-body"></div>
+          <div class="channel-detail" id="detail-facebook"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/channels.js"></script>
+</body>
+</html>

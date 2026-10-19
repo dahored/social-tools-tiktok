@@ -9,11 +9,6 @@ const SOUND_DIR = path.join(env.dataDir, 'chat-overlay-sounds');
 
 const DEFAULT_SETTINGS = Object.freeze({
   style:       'default', // default | gta
-  twitch:      '',
-  kick:        '',
-  youtube:     '',
-  tiktok:      '',
-  facebook:    '',        // page id, set by "Conectar Facebook"
   maxMessages: 8,
   hideAfter:   0,         // seconds, 0 = keep until pushed out
   fontSize:    26,

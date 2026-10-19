@@ -327,3 +327,10 @@ code {
 input[type='range'] { width: 100%; accent-color: #2563eb; }
 input[type='file'] { font-size: 0.8rem; color: var(--text-2); }
 #soundTestBtn { align-self: flex-start; }
+
+.channel-list { display: flex; flex-direction: column; gap: 4px; }
+.channel-row { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-2); }
+.channel-row .name { flex: 1; }
+.channel-row .channel-state { margin-left: 0; }
+.channel-list .channel-detail { margin: 0 0 4px 28px; min-height: 0; }
+.link { color: var(--tt-cyan); text-decoration: none; font-size: 0.82rem; font-weight: 600; }

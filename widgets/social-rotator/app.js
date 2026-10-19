@@ -52,6 +52,7 @@ var state = {
   borderRadius: 24,
   cardWidth:    480,
   game:         'default',
+  available:    [], // every platform from "Mis canales" with handle + hidden flag
 };
 
 var currentIndex = 0;
@@ -168,41 +169,45 @@ function renderAccountsList() {
   var list = document.getElementById('accountsList');
   if (!list) return;
 
-  if (!state.accounts.length) {
-    list.innerHTML = '<p class="accounts-empty">No accounts added yet.</p>';
-    return;
-  }
-
-  list.innerHTML = state.accounts.map(function (acc, i) {
+  list.innerHTML = state.available.map(function (acc, i) {
     var p = PLATFORMS[acc.platform] || {};
+    var missing = !acc.handle;
     return (
-      '<div class="account-item">' +
+      '<div class="account-item' + (missing ? ' is-missing' : '') + (acc.hidden ? ' is-hidden' : '') + '">' +
+        '<label class="acct-toggle" title="Mostrar en el rotator">' +
+          '<input type="checkbox" data-toggle="' + i + '"' + (!acc.hidden && !missing ? ' checked' : '') + (missing ? ' disabled' : '') + ' />' +
+        '</label>' +
         '<span class="acct-icon" style="background:' + (p.color || '#888') + '">' + (p.icon || '') + '</span>' +
         '<div class="acct-info">' +
           '<span class="acct-platform">' + escapeHtml(p.name || acc.platform) + '</span>' +
-          '<span class="acct-handle">' + escapeHtml(acc.handle) + '</span>' +
+          '<span class="acct-handle">' + (missing ? 'Sin configurar' : escapeHtml(acc.handle)) + '</span>' +
         '</div>' +
-        '<button class="acct-remove" data-index="' + i + '" title="Remove">✕</button>' +
+        '<button class="acct-move" data-move="' + i + '" data-dir="-1" title="Subir"' + (i === 0 ? ' disabled' : '') + '>↑</button>' +
+        '<button class="acct-move" data-move="' + i + '" data-dir="1" title="Bajar"' + (i === state.available.length - 1 ? ' disabled' : '') + '>↓</button>' +
       '</div>'
     );
   }).join('');
+}
 
-  list.querySelectorAll('.acct-remove').forEach(function (btn) {
-    btn.addEventListener('click', async function () {
-      var idx = parseInt(this.getAttribute('data-index'), 10);
-      state.accounts.splice(idx, 1);
-      if (currentIndex >= state.accounts.length) currentIndex = Math.max(0, state.accounts.length - 1);
-      renderAccountsList();
-      startRotation();
-      await saveSettings();
-    });
-  });
+/** Cards to rotate: visible platforms that have a handle in "Mis canales", in order. */
+function computeAccounts() {
+  state.accounts = state.available.filter(function (a) { return a.handle && !a.hidden; })
+    .map(function (a) { return { platform: a.platform, handle: a.handle }; });
+}
+
+async function onAccountsChanged() {
+  computeAccounts();
+  if (currentIndex >= state.accounts.length) currentIndex = 0;
+  renderAccountsList();
+  startRotation();
+  await saveSettings();
 }
 
 /* ── Apply API response ─────────────────────────────────────── */
 function applySettings(data) {
   state.username     = data.username  || state.username;
   state.accounts     = Array.isArray(data.accounts) ? data.accounts : [];
+  state.available    = Array.isArray(data.available) ? data.available : [];
   state.interval     = Number(data.interval)  || 5;
   state.animation    = data.animation || 'slide';
   state.borderRadius = Number(data.borderRadius) ?? 24;
@@ -224,6 +229,9 @@ function applySettings(data) {
   if (gameEl)         gameEl.value         = state.game;
 
   renderAccountsList();
+
+  var linkEl = document.getElementById('channelsLink');
+  if (linkEl) linkEl.href = '/channels.html?username=' + encodeURIComponent(state.username);
 
   var urlEl = document.getElementById('widgetUrl');
   if (urlEl) {
@@ -263,7 +271,9 @@ async function saveSettings() {
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({
         username:     state.username,
-        accounts:     state.accounts,
+        // which "Mis canales" accounts to show, and in what order
+        order:        state.available.map(function (x) { return x.platform; }),
+        hidden:       state.available.filter(function (x) { return x.hidden; }).map(function (x) { return x.platform; }),
         interval:     parseInt(intervalEl     ? intervalEl.value     : state.interval,     10),
         animation:    animationEl    ? animationEl.value    : state.animation,
         borderRadius: parseInt(borderRadiusEl ? borderRadiusEl.value : state.borderRadius, 10),
@@ -316,37 +326,24 @@ async function copyText(text) {
     });
   }
 
-  /* ── Add account ─────────── */
-  var addBtn = document.getElementById('addAccountBtn');
-  if (addBtn) {
-    addBtn.addEventListener('click', async function () {
-      var platformEl = document.getElementById('addPlatform');
-      var handleEl   = document.getElementById('addHandle');
-      var handle = handleEl ? handleEl.value.trim() : '';
-      if (!handle) { setStatus('Enter a handle first.'); return; }
-      state.accounts.push({ platform: platformEl.value, handle: handle });
-      if (handleEl) handleEl.value = '';
-      currentIndex = 0;
-      renderAccountsList();
-      startRotation();
-      await saveSettings();
+  /* ── Show/hide and reorder accounts (from "Mis canales") ── */
+  var accountsList = document.getElementById('accountsList');
+  if (accountsList) {
+    accountsList.addEventListener('change', function (e) {
+      var i = e.target.getAttribute('data-toggle');
+      if (i === null) return;
+      state.available[i].hidden = !e.target.checked;
+      onAccountsChanged();
     });
-  }
-
-  /* ── Live preview of the game style (saved with Save Settings) ── */
-  var gameSelect = document.getElementById('game');
-  if (gameSelect) {
-    gameSelect.addEventListener('change', function () {
-      state.game = this.value;
-      if (state.accounts.length) updateCardDOM(state.accounts[currentIndex]);
-    });
-  }
-
-  /* ── Add on Enter key ────── */
-  var handleInput = document.getElementById('addHandle');
-  if (handleInput) {
-    handleInput.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') { e.preventDefault(); addBtn && addBtn.click(); }
+    accountsList.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-move]');
+      if (!btn) return;
+      var i = Number(btn.getAttribute('data-move'));
+      var j = i + Number(btn.getAttribute('data-dir'));
+      if (j < 0 || j >= state.available.length) return;
+      var moved = state.available.splice(i, 1)[0];
+      state.available.splice(j, 0, moved);
+      onAccountsChanged();
     });
   }
 

@@ -13,6 +13,9 @@ const { createYoutubeConnector } = require('./chat/youtube.connector');
 const { createTiktokConnector }  = require('./chat/tiktok.connector');
 const { createFacebookConnector } = require('./chat/facebook.connector');
 const fbAuth = require('./facebook-auth.service');
+const channels = require('./channels.service');
+const seAuth = require('./streamelements.service');
+const { createStreamElementsConnector } = require('./chat/streamelements.connector');
 
 const PLATFORMS = {
   twitch:  createTwitchConnector,
@@ -82,10 +85,73 @@ function _delete(room, platform, { ids, user, all }) {
   _send(room, payload);
 }
 
-/** Starts/stops/restarts connectors so they match the saved channels. */
-function _sync(room, settings) {
+/** Donations, subs, follows… from any platform → every client of the room (the alerts overlay). */
+function publishAlert(username, platform, evt) {
+  const room = _rooms.get(sanitizeUsername(username));
+  if (!room) return;
+  const alert = { ...evt, id: `${platform}:${evt.id}`, platform, ts: evt.ts || Date.now() };
+  _send(room, { type: 'alert', alert });
+}
+
+/** Pushes alert-overlay settings to open overlays (they share the chat room). */
+function broadcastAlertSettings(username, settings) {
+  const room = _rooms.get(sanitizeUsername(username));
+  if (room) _send(room, { type: 'alert-settings', settings });
+}
+
+/** Live channels for a user: "Mis canales" + the connected Facebook Page. */
+async function _channelsFor(username) {
+  const mine = await channels.get(username);
+  const fb = await fbAuth.status(username);
+  return {
+    twitch:   mine.twitch,
+    kick:     mine.kick,
+    youtube:  mine.youtube,
+    tiktok:   mine.tiktok,
+    facebook: fb.connected ? fb.pageId || '' : '',
+    streamelements: await seAuth.channelsWithTokens(username), // X, tips, Twitch follows
+  };
+}
+
+/** Re-reads the user's channels and restarts whatever changed (if anyone is watching). */
+async function resync(username) {
+  const room = _rooms.get(sanitizeUsername(username));
+  if (room && room.clients.size) _sync(room, await _channelsFor(room.username));
+}
+
+channels.onChange((username) => resync(username));
+seAuth.onChange((username) => resync(username));
+
+/** One StreamElements connection per linked SE channel (keyed by channel id). */
+function _syncStreamElements(room, seChannels = []) {
+  const wanted = new Map(seChannels.map((c) => [`se:${c.id}`, c]));
+  for (const key of Object.keys(room.connectors)) {
+    if (!key.startsWith('se:')) continue;
+    const want = wanted.get(key);
+    if (!want || want.token !== room.connectors[key].channel) {
+      room.connectors[key].conn.stop();
+      delete room.connectors[key];
+    }
+  }
+  for (const [key, ch] of wanted) {
+    if (room.connectors[key]) continue;
+    const provider = String(ch.provider || '').toLowerCase();
+    // X has no native reader, so its live status/chat appear under "x"
+    const statusKey = provider === 'x' ? 'x' : 'streamelements';
+    const conn = createStreamElementsConnector({
+      channel: ch,
+      onMessage: (m) => _publish(room, provider || 'streamelements', m),
+      onEvent:   (evt) => publishAlert(room.username, evt.platform, evt),
+      onStatus:  (state, detail) => _status(room, statusKey, state, detail),
+    });
+    room.connectors[key] = { channel: ch.token, conn };
+  }
+}
+
+/** Starts/stops/restarts connectors so they match the user's channels. */
+function _sync(room, list) {
   for (const platform of Object.keys(PLATFORMS)) {
-    const channel = _cleanChannel(settings[platform]);
+    const channel = _cleanChannel(list[platform]);
     const current = room.connectors[platform];
     if (current && current.channel === channel) continue;
 
@@ -100,12 +166,14 @@ function _sync(room, settings) {
         onMessage: (m) => _publish(room, platform, m),
         onDelete:  (d) => _delete(room, platform, d),
         onStatus:  (state, detail) => _status(room, platform, state, detail),
+        onEvent:   (evt) => publishAlert(room.username, platform, evt),
       });
       room.connectors[platform] = { channel, conn };
     } else {
       _send(room, { type: 'status', platform, state: 'off', detail: null });
     }
   }
+  _syncStreamElements(room, list.streamelements);
 }
 
 function _stopAll(room) {
@@ -122,10 +190,6 @@ async function saveSettings(data) {
   const username = sanitizeUsername(data.username);
   const patch = {};
   if (VALID_STYLES.has(data.style)) patch.style = data.style;
-  for (const platform of Object.keys(PLATFORMS)) {
-    if (platform === 'facebook') continue; // managed by "Conectar Facebook"
-    if (data[platform] !== undefined) patch[platform] = _cleanChannel(data[platform]);
-  }
   const num = (v, min, max) => Math.min(max, Math.max(min, Math.round(Number(v))));
   if (Number.isFinite(Number(data.maxMessages))) patch.maxMessages = num(data.maxMessages, 1, 30);
   if (Number.isFinite(Number(data.hideAfter)))   patch.hideAfter   = num(data.hideAfter, 0, 600);
@@ -136,10 +200,7 @@ async function saveSettings(data) {
 
   const settings = await repo.saveSettings(username, patch);
   const room = _rooms.get(username);
-  if (room) {
-    _send(room, { type: 'settings', settings });
-    if (room.clients.size) _sync(room, settings);
-  }
+  if (room) _send(room, { type: 'settings', settings });
   return settings;
 }
 
@@ -151,7 +212,7 @@ async function subscribe(username, res) {
   room.clients.add(res);
 
   const settings = await repo.getSettings(username);
-  _sync(room, settings);
+  _sync(room, await _channelsFor(username));
   res.write(`data: ${JSON.stringify({ type: 'snapshot', settings, statuses: room.statuses, recent: room.recent })}\n\n`);
 }
 
@@ -221,16 +282,9 @@ async function getSoundPath(username) {
   return settings.soundFile ? repo.soundPath(settings.soundFile) : null;
 }
 
-/** Points the chat at the connected Facebook Page (or clears it). */
-async function setFacebookPage(username, pageId) {
-  username = sanitizeUsername(username);
-  const settings = await repo.saveSettings(username, { facebook: pageId || '' });
-  const room = _rooms.get(username);
-  if (room) {
-    _send(room, { type: 'settings', settings });
-    if (room.clients.size) _sync(room, settings);
-  }
-  return settings;
+/** The connected Facebook Page changed: restart the Facebook connection. */
+async function setFacebookPage(username) {
+  await resync(username);
 }
 
 /* ── "Conectar Facebook" ─────────────────────────────────────────────── */
@@ -240,8 +294,8 @@ function facebookLoginUrl(username, origin) {
 }
 
 async function facebookCallback(params) {
-  const { username, pageId } = await fbAuth.handleCallback(params);
-  await setFacebookPage(username, pageId);
+  const { username } = await fbAuth.handleCallback(params);
+  await setFacebookPage(username);
   return username;
 }
 
@@ -252,14 +306,14 @@ function facebookStatus(username) {
 async function facebookSelectPage(username, pageId) {
   username = sanitizeUsername(username);
   await fbAuth.selectPage(username, String(pageId || ''));
-  await setFacebookPage(username, String(pageId));
+  await setFacebookPage(username);
   return fbAuth.status(username);
 }
 
 async function facebookDisconnect(username) {
   username = sanitizeUsername(username);
   await fbAuth.disconnect(username);
-  await setFacebookPage(username, '');
+  await setFacebookPage(username);
   return fbAuth.status(username);
 }
 
@@ -270,6 +324,8 @@ module.exports = {
   subscribe,
   unsubscribe,
   sendTest,
+  publishAlert,
+  broadcastAlertSettings,
   saveSound,
   getSoundPath,
   facebookLoginUrl,

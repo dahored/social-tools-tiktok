@@ -13,6 +13,8 @@ const counterRoutes       = require('./routes/counter.routes');
 const socialRotatorRoutes = require('./routes/social-rotator.routes');
 const sceneTransitionRoutes = require('./routes/scene-transition.routes');
 const chatOverlayRoutes = require('./routes/chat-overlay.routes');
+const channelsRoutes    = require('./routes/channels.routes');
+const streamElementsRoutes = require('./routes/streamelements.routes');
 const sceneTransitionService = require('./src/services/scene-transition.service');
 
 const app = express();
@@ -49,6 +51,8 @@ app.use('/api/counter',         counterRoutes);
 app.use('/api/social-rotator',  socialRotatorRoutes);
 app.use('/api/scene-transition', sceneTransitionRoutes);
 app.use('/api/chat-overlay',     chatOverlayRoutes);
+app.use('/api/channels',         channelsRoutes);
+app.use('/api/streamelements',   streamElementsRoutes);
 
 // ── SPA fallback ──────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {

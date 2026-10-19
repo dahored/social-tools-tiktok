@@ -117,6 +117,7 @@
   /* ── Config: nav links ──────────────────────────────────────── */
   var NAV_LINKS = [
     { label: 'Widget Hub', href: '/' },
+    { label: 'Mis canales', href: '/channels.html' },
   ];
 
   var path = window.location.pathname;
