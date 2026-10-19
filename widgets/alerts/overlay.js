@@ -193,7 +193,45 @@
     return node;
   }
 
+  /* ── GTA VI card ─────────────────────────────────────────────── */
+
+  var GTA_KICKER = {
+    donation: 'Misión cumplida', subscription: 'Nuevo miembro', gift_sub: 'Generosidad +',
+    follow: 'Nuevo aliado', raid: 'Refuerzos en camino', share: 'Corre la voz', like: 'Popularidad +',
+  };
+
+  function renderGta(a) {
+    var p = window.PLATFORM_ICONS[a.platform] || { name: a.platform, color: '#666', fg: '#fff', svg: '' };
+    var d = describe(a);
+    var user = a.user || {};
+    var title = escapeHtml(d.title.replace(/^¡|!$/g, ''));
+    var plate = d.hideUser ? '' :
+      '<div class="gx-plate">' +
+        '<span class="gx-plate-top">' + escapeHtml(p.name) + '</span>' +
+        '<span class="gx-plate-name"><span class="gx-plate-logo" style="background:' + p.color + ';color:' + p.fg + '">' + p.svg + '</span>' +
+          escapeHtml(user.name || '') + '</span>' +
+      '</div>';
+    var itemImg = a.item && a.item.image ? '<img class="gx-item" src="' + escapeHtml(a.item.image) + '" alt="" />' : '';
+    var value = d.value
+      ? '<div class="gx-value ' + (d.money ? 'is-money' : 'is-respect') + '">' + itemImg + '<span>' + escapeHtml(d.value) + '</span></div>'
+      : '';
+    var detail = d.detail ? '<div class="gx-detail">' + escapeHtml(d.detail) + '</div>' : '';
+    var message = settings.showMessage && a.message ? '<div class="gx-message">“' + escapeHtml(a.message) + '”</div>' : '';
+
+    var node = document.createElement('div');
+    node.className = 'alert gx gx--' + a.type;
+    node.innerHTML =
+      '<div class="gx-card">' +
+        '<div class="gx-sun"></div>' +
+        '<div class="gx-kicker"><span>★ ' + escapeHtml(GTA_KICKER[a.type] || 'Misión cumplida') + ' ★</span></div>' +
+        '<div class="gx-title"><span class="gx-title-outline">' + title + '</span><span class="gx-title-fill">' + title + '</span></div>' +
+        plate + value + detail + message +
+      '</div>';
+    return node;
+  }
+
   function render(a) {
+    if (settings.style === 'gta') return renderGta(a);
     if (settings.style !== 'gta') return renderNeon(a);
     var p = window.PLATFORM_ICONS[a.platform] || { name: a.platform, color: '#666', fg: '#fff', svg: '' };
     var d = describe(a);
