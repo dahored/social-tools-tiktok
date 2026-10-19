@@ -1,0 +1,100 @@
+/* ── GTA: "MISSION PASSED / RESPECT +" — gold title, white name, green money ── */
+
+.style-gta .stage { font-family: 'GTA', Impact, sans-serif; }
+
+/* Soft dark band behind the text so it reads over any gameplay */
+.style-gta .alert-glow {
+  left: -40vw;
+  right: -40vw;
+  top: -.6em;
+  bottom: -.6em;
+  background: radial-gradient(60% 70% at 50% 50%, rgba(0, 0, 0, .55), transparent 75%);
+  animation: alert-gta-fade .5s ease both;
+}
+
+.style-gta .alert-card { gap: .05em; }
+
+.style-gta .alert-badge {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: .36em;
+  font-weight: 800;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: #fff;
+  padding: .3em .9em;
+  background: rgba(0, 0, 0, .55);
+  border: .08em solid rgba(255, 255, 255, .5);
+  animation: alert-gta-fade .4s ease both;
+}
+.style-gta .alert-platform { color: var(--platform); }
+
+.style-gta .alert-title,
+.style-gta .alert-user,
+.style-gta .alert-value {
+  -webkit-text-stroke: .09em #000;
+  paint-order: stroke fill;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  line-height: 1;
+}
+
+/* Big gold title that lands from huge and blurry, like the classic banner */
+.style-gta .alert-title {
+  font-size: 1.9em;
+  margin-top: .1em;
+  background: linear-gradient(180deg, #fff2a8 0%, #ffc93c 45%, #f08a1c 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 .06em 0 #000) drop-shadow(0 .1em .25em rgba(0, 0, 0, .6));
+  animation: alert-gta-slam .55s cubic-bezier(.2, .9, .3, 1) both;
+}
+
+.style-gta .alert-user {
+  font-size: 1.05em;
+  color: #fff;
+  filter: drop-shadow(0 .05em 0 #000);
+  animation: alert-gta-rise .45s .25s ease both;
+}
+.style-gta .alert-avatar { border: .08em solid #000; }
+
+/* "+$500" in GTA money green, "RESPETO +" in white-blue */
+.style-gta .alert-value {
+  font-size: 1.15em;
+  margin-top: .1em;
+  color: #6fe36f;
+  filter: drop-shadow(0 .05em 0 #000);
+  animation: alert-gta-rise .45s .45s ease both;
+}
+.style-gta .is-respect .alert-value { color: #e8f1ff; font-size: .95em; }
+.style-gta .is-respect .alert-value span { background: linear-gradient(180deg, #ffffff, #9cc4ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+.style-gta .alert-detail,
+.style-gta .alert-message {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 .08em .2em #000, 0 0 .1em #000;
+  animation: alert-gta-fade .4s .6s ease both;
+}
+.style-gta .alert-detail { font-size: .5em; letter-spacing: .08em; text-transform: uppercase; }
+.style-gta .alert-message { font-size: .48em; margin-top: .3em; }
+
+.style-gta .alert.is-leaving { animation: alert-gta-out .7s ease-in forwards; }
+
+@keyframes alert-gta-slam {
+  0%   { opacity: 0; transform: scale(2.6); filter: blur(.25em); }
+  70%  { opacity: 1; transform: scale(.96); filter: blur(0) drop-shadow(0 .06em 0 #000); }
+  100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 .06em 0 #000) drop-shadow(0 .1em .25em rgba(0, 0, 0, .6)); }
+}
+@keyframes alert-gta-rise {
+  from { opacity: 0; transform: translateY(.4em); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes alert-gta-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes alert-gta-out {
+  to { opacity: 0; filter: blur(.08em); }
+}

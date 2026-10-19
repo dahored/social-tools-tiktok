@@ -1,0 +1,35 @@
+/* Layout shared by every alert style. Everything is in em of a size that
+   follows the Browser Source, so the alert fits 1920×1080, 800×450, etc. */
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: min(3.4vw, 6vh);
+}
+
+.alert { position: relative; display: flex; justify-content: center; max-width: 92vw; }
+.alert-card { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.alert-glow { position: absolute; pointer-events: none; }
+
+.alert-badge { display: inline-flex; align-items: center; gap: .35em; }
+.alert-platform { display: inline-flex; width: 1em; height: 1em; }
+.alert-platform svg { width: 100%; height: 100%; }
+
+.alert-user { display: flex; align-items: center; gap: .4em; max-width: 100%; }
+.alert-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.alert-avatar { width: 1.3em; height: 1.3em; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.alert-avatar--logo { display: inline-flex; padding: .22em; box-sizing: border-box; background: var(--platform); color: var(--platform-fg); }
+.alert-avatar--logo svg { width: 100%; height: 100%; }
+
+.alert-value { display: flex; align-items: center; gap: .3em; }
+.alert-item { height: 1.3em; width: auto; }
+.alert-message { max-width: 22em; overflow-wrap: anywhere; }

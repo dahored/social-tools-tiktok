@@ -53,7 +53,9 @@ function rolesFrom(badges) {
   return roles;
 }
 
-function createTwitchConnector({ channel, onMessage, onDelete, onStatus }) {
+const TIER_LABEL = { 1000: 'Tier 1', 2000: 'Tier 2', 3000: 'Tier 3', Prime: 'Prime' };
+
+function createTwitchConnector({ channel, onMessage, onDelete, onStatus, onEvent = () => {} }) {
   const login = String(channel).trim().replace(/^@/, '').replace(/^https?:\/\/(www\.)?twitch\.tv\//i, '').split(/[/?#]/)[0].toLowerCase();
   let ws = null;
   let stopped = false;
@@ -89,6 +91,16 @@ function createTwitchConnector({ channel, onMessage, onDelete, onStatus }) {
           // /me messages arrive wrapped in CTCP ACTION
           const action = /^\u0001ACTION (.*)\u0001$/.exec(text);
           if (action) text = action[1];
+          const bits = Number(tags.bits) || 0;
+          if (bits > 0) {
+            onEvent({
+              id: `bits-${tags.id}`,
+              type: 'donation',
+              user: { name: tags['display-name'] || tags.login || 'user' },
+              amount: { value: bits, unit: 'bits', display: `${bits} bits` },
+              message: text.replace(/\b[A-Za-z]+\d+\b/g, '').replace(/\s+/g, ' ').trim(), // drop "Cheer100" tokens
+            });
+          }
           onMessage({
             id: tags.id || `${Date.now()}-${Math.random()}`,
             author: {
@@ -99,6 +111,8 @@ function createTwitchConnector({ channel, onMessage, onDelete, onStatus }) {
             parts: toParts(text, tags.emotes),
             ts: Number(tags['tmi-sent-ts']) || Date.now(),
           });
+        } else if (command === 'USERNOTICE') {
+          handleUserNotice(tags, trailing || '');
         } else if (command === 'CLEARMSG' && tags['target-msg-id']) {
           onDelete({ ids: [tags['target-msg-id']] });
         } else if (command === 'CLEARCHAT') {
@@ -116,6 +130,32 @@ function createTwitchConnector({ channel, onMessage, onDelete, onStatus }) {
       retryTimer = setTimeout(connect, Math.min(30000, 1000 * 2 ** retry++));
     });
     ws.on('error', () => { /* close follows */ });
+  }
+
+  /** Subs, resubs, gifted subs and raids. */
+  function handleUserNotice(tags, text) {
+    const kind = tags['msg-id'];
+    const user = { name: tags['display-name'] || tags.login || 'user' };
+    const id = `notice-${tags.id}`;
+    if (kind === 'sub' || kind === 'resub') {
+      onEvent({
+        id, type: 'subscription', user,
+        months: Number(tags['msg-param-cumulative-months']) || 1,
+        tier: TIER_LABEL[tags['msg-param-sub-plan']] || null,
+        message: text,
+      });
+    } else if (kind === 'submysterygift') {
+      onEvent({ id, type: 'gift_sub', user, count: Number(tags['msg-param-mass-gift-count']) || 1 });
+    } else if (kind === 'subgift' && !tags['msg-param-community-gift-id']) {
+      // single direct gift (mystery-gift batches are announced once above)
+      onEvent({ id, type: 'gift_sub', user, count: 1, recipient: tags['msg-param-recipient-display-name'] || null });
+    } else if (kind === 'raid') {
+      onEvent({
+        id, type: 'raid',
+        user: { name: tags['msg-param-displayName'] || user.name },
+        count: Number(tags['msg-param-viewerCount']) || 0,
+      });
+    }
   }
 
   if (!login) {

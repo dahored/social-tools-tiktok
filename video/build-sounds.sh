@@ -72,3 +72,18 @@ mix "$CHAT/default.mp3" 0.45 \
 mix "$CHAT/gta.mp3" 0.6 \
   "$K/glass_002.ogg:0.00:1.0" \
   "$K/jingles_SAX09.ogg:0.03:1.4"
+
+# ── Alerts: donations, subs, follows… (assets/sounds/alerts/<style>.mp3) ──
+ALERTS=assets/sounds/alerts
+mkdir -p "$ALERTS"
+
+# GTA "mission passed": whoosh in, sax jingle, cascade of casino chips for the money
+mix "$ALERTS/gta.mp3" 2.4 \
+  "$TMP/whoosh-in.wav:0.00:1.6" \
+  "$K/jingles_SAX07.ogg:0.10:1.2" \
+  "$K/chips-handle-5.ogg:0.55:0.9"
+
+# Default: bright musical hit with a glass sparkle
+mix "$ALERTS/default.mp3" 1.6 \
+  "$K/jingles_HIT15.ogg:0.00:1.0" \
+  "$K/glass_002.ogg:0.05:0.7"

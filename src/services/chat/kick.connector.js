@@ -49,13 +49,15 @@ function rolesFrom(badges = []) {
   return roles;
 }
 
-function createKickConnector({ channel, onMessage, onDelete, onStatus }) {
+function createKickConnector({ channel, onMessage, onDelete, onStatus, onEvent = () => {} }) {
   const slug = String(channel).trim().replace(/^@/, '').replace(/^https?:\/\/(www\.)?kick\.com\//i, '').split(/[/?#]/)[0].toLowerCase();
   let ws = null;
   let stopped = false;
   let retry = 0;
   let timer = null;
   let chatroomId = null;
+  let channelId = null;
+  const loggedUnknown = new Set();
 
   function scheduleReconnect(ms) {
     clearTimeout(timer);
@@ -69,6 +71,7 @@ function createKickConnector({ channel, onMessage, onDelete, onStatus }) {
       if (!chatroomId) {
         const ch = await kickJson(`https://kick.com/api/v2/channels/${encodeURIComponent(slug)}`);
         chatroomId = ch.chatroom && ch.chatroom.id;
+        channelId = ch.id;
         if (!chatroomId) throw new Error('Canal no encontrado');
       }
       const clientId = crypto.randomUUID();
@@ -96,6 +99,8 @@ function createKickConnector({ channel, onMessage, onDelete, onStatus }) {
           if (Object.keys(msg).length === 0) { ws.send('{}'); continue; } // ping → pong
           if (msg.id === 1 && msg.connect) {
             ws.send(JSON.stringify({ id: 2, subscribe: { channel: `chatrooms.${chatroomId}.v2` } }));
+            // follows / channel-level events
+            if (channelId) ws.send(JSON.stringify({ id: 3, subscribe: { channel: `channel.${channelId}` } }));
             // guest token expires: reconnect a minute early with a fresh one
             if (msg.connect.ttl) scheduleReconnect(Math.max(60, msg.connect.ttl - 60) * 1000);
           } else if (msg.id === 2) {
@@ -142,6 +147,42 @@ function createKickConnector({ channel, onMessage, onDelete, onStatus }) {
       onDelete({ user: data.user.username });
     } else if (evt.event === 'App\\Events\\ChatroomClearEvent') {
       onDelete({ all: true });
+    } else {
+      handleAlert(evt.event, data);
+    }
+  }
+
+  /** Subs, gifted subs, hosts, follows and Kicks gifts → alert events. */
+  function handleAlert(name, data) {
+    const short = String(name).replace(/^App\\Events\\/, '');
+    const id = `${short}-${data.id || Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    if (short === 'SubscriptionEvent') {
+      onEvent({ id, type: 'subscription', user: { name: data.username || 'user' }, months: Number(data.months) || 1 });
+    } else if (short === 'GiftedSubscriptionsEvent') {
+      const gifted = Array.isArray(data.gifted_usernames) ? data.gifted_usernames : [];
+      onEvent({ id, type: 'gift_sub', user: { name: data.gifter_username || 'Anónimo' }, count: gifted.length || 1 });
+    } else if (short === 'StreamHostEvent' || short === 'StreamHostedEvent') {
+      onEvent({
+        id, type: 'raid',
+        user: { name: data.host_username || (data.host && data.host.username) || 'Streamer' },
+        count: Number(data.number_viewers || data.viewers_count) || 0,
+        message: data.optional_message || '',
+      });
+    } else if (short === 'FollowersUpdated') {
+      if (data.followed && data.username) onEvent({ id, type: 'follow', user: { name: data.username } });
+    } else if (/KicksGifted|GiftedKicks/i.test(short)) {
+      const gift = data.gift || {};
+      const amount = Number(gift.amount || data.amount) || 0;
+      onEvent({
+        id, type: 'donation',
+        user: { name: (data.sender && data.sender.username) || 'user' },
+        amount: { value: amount, unit: 'kicks', display: `${amount} Kicks` },
+        item: gift.name ? { name: gift.name } : null,
+        message: data.message || '',
+      });
+    } else if (!loggedUnknown.has(short) && !/Pinned|Poll|UserUnbanned|ChatMoveTo/.test(short)) {
+      loggedUnknown.add(short); // help discover new Kick event names
+      console.log(`[kick] unhandled event ${short}: ${JSON.stringify(data).slice(0, 300)}`);
     }
   }
 

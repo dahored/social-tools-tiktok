@@ -90,7 +90,19 @@ function rolesFrom(badges = []) {
   return roles;
 }
 
-function createYoutubeConnector({ channel, onMessage, onDelete, onStatus }) {
+/** "$5.00" / "MX$100.00" / "€2,00" → 5 / 100 / 2 (for minimum-amount filters). */
+function amountValue(display) {
+  const n = String(display || '').replace(/[^0-9.,]/g, '');
+  const normalized = /,\d{2}$/.test(n) ? n.replace(/\./g, '').replace(',', '.') : n.replace(/,/g, '');
+  return Number(normalized) || 0;
+}
+
+function lastThumb(image) {
+  const thumbs = (image && image.thumbnails) || [];
+  return thumbs.length ? thumbs[thumbs.length - 1].url : null;
+}
+
+function createYoutubeConnector({ channel, onMessage, onDelete, onStatus, onEvent = () => {} }) {
   let stopped = false;
   let timer = null;
 
@@ -159,9 +171,51 @@ function createYoutubeConnector({ channel, onMessage, onDelete, onStatus }) {
     }
   }
 
+  /** Super Chats, Super Stickers, memberships and gifted memberships → alert events. */
+  function handleAlertItem(item) {
+    const paid = item.liveChatPaidMessageRenderer;
+    const sticker = item.liveChatPaidStickerRenderer;
+    const member = item.liveChatMembershipItemRenderer;
+    const gifts = item.liveChatSponsorshipsGiftPurchaseAnnouncementRenderer;
+
+    if (paid || sticker) {
+      const r = paid || sticker;
+      const display = textOf((r.purchaseAmountText || {}).runs) || (r.purchaseAmountText || {}).simpleText || '';
+      onEvent({
+        id: `yt-${r.id}`,
+        type: 'donation',
+        user: { name: (r.authorName && r.authorName.simpleText) || 'user', avatar: lastThumb(r.authorPhoto) },
+        amount: { value: amountValue(display), unit: 'currency', display },
+        item: sticker ? { name: 'Super Sticker', image: lastThumb(sticker.sticker) } : null,
+        message: paid ? textOf((paid.message || {}).runs) : '',
+      });
+    } else if (member) {
+      const header = textOf((member.headerPrimaryText || {}).runs); // "Member for 6 months" on milestones
+      const months = Number((/(\d+)/.exec(header) || [])[1]) || 1;
+      onEvent({
+        id: `yt-${member.id}`,
+        type: 'subscription',
+        user: { name: (member.authorName && member.authorName.simpleText) || 'user', avatar: lastThumb(member.authorPhoto) },
+        months,
+        tier: 'Miembro',
+        message: textOf((member.message || {}).runs),
+      });
+    } else if (gifts) {
+      const h = (gifts.header && gifts.header.liveChatSponsorshipsHeaderRenderer) || {};
+      const text = textOf((h.primaryText || {}).runs);
+      onEvent({
+        id: `yt-${gifts.id}`,
+        type: 'gift_sub',
+        user: { name: (h.authorName && h.authorName.simpleText) || 'user', avatar: lastThumb(h.authorPhoto) },
+        count: Number((/(\d+)/.exec(text) || [])[1]) || 1,
+      });
+    }
+  }
+
   function handleActions(actions) {
     for (const action of actions) {
       const item = action.addChatItemAction && action.addChatItemAction.item;
+      if (item) handleAlertItem(item);
       if (item) {
         const r = item.liveChatTextMessageRenderer || item.liveChatPaidMessageRenderer;
         if (!r) continue;

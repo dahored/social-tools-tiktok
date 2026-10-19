@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alerts — Social Tools TikTok</title>
+  <link rel="stylesheet" href="/widgets/alerts/editor.css" />
+  <script src="/auth-guard.js"></script>
+  <script src="/navbar.js"></script>
+  <script src="/widgets/shared/platform-icons.js"></script>
+</head>
+<body>
+  <main class="page">
+
+    <header class="page-hd">
+      <nav class="breadcrumb">
+        <a href="/">Widget Hub</a>
+        <span class="sep">/</span>
+        <span class="current">Alertas</span>
+      </nav>
+      <div class="page-title">
+        <h1>Alertas</h1>
+        <p>Regalos, donaciones, suscripciones, follows, raids, shares y likes de tus directos, con estilo de juego.</p>
+      </div>
+    </header>
+
+    <div class="editor-layout">
+
+      <aside class="editor-sidebar">
+
+        <div class="panel">
+          <p class="panel-title">Username</p>
+          <div class="username-row">
+            <input id="username" type="text" value="default" placeholder="username" />
+            <button id="loadUserBtn" class="btn-ghost">Load</button>
+          </div>
+          <div class="status-bar">
+            <span class="status-live-dot"></span>
+            <span id="status">Idle</span>
+          </div>
+        </div>
+
+        <div class="panel stack">
+          <p class="panel-title" style="margin-bottom:0">Canales</p>
+          <div id="channelList" class="channel-list"></div>
+          <a id="channelsLink" class="link" href="/channels.html">Editar mis canales →</a>
+          <p class="hint">Los canales se configuran una vez en "Mis canales".</p>
+        </div>
+
+        <div class="panel stack">
+          <p class="panel-title" style="margin-bottom:0">Estilo</p>
+          <div class="grid-2">
+            <div class="field">
+              <label for="style">Juego</label>
+              <select id="style">
+                <option value="default">Neón</option>
+                <option value="gta">GTA</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="duration">Duración (s)</label>
+              <input id="duration" type="number" min="2" max="30" value="6" />
+            </div>
+          </div>
+          <div class="field" id="sizeField">
+            <label for="size">Tamaño (Neón)</label>
+            <select id="size">
+              <option value="large">Grande</option>
+              <option value="compact">Compacto</option>
+            </select>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="sound">Sonido</label>
+              <select id="sound">
+                <option value="style">Activado</option>
+                <option value="off">Silenciar todo</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="volume">Volumen <span id="volumeValue">70</span>%</label>
+              <input id="volume" type="range" min="0" max="100" step="5" value="70" />
+            </div>
+          </div>
+          <label class="check-row"><input id="showMessage" type="checkbox" checked /> Mostrar el mensaje del donante</label>
+        </div>
+
+        <div class="panel stack">
+          <p class="panel-title" style="margin-bottom:0">Sonidos por evento</p>
+          <div id="soundList" class="sound-list"></div>
+          <p class="hint">Sube un MP3, OGG, WAV o M4A (máx. 3 MB). Se suben al pulsar Guardar.</p>
+        </div>
+
+        <div class="panel stack">
+          <p class="panel-title" style="margin-bottom:0">Eventos</p>
+          <div class="check-list" id="typeList"></div>
+          <div class="grid-3">
+            <div class="field">
+              <label for="likeMilestone">Likes cada</label>
+              <input id="likeMilestone" type="number" min="100" step="100" value="1000" title="TikTok: una alerta cada N likes" />
+            </div>
+            <div class="field">
+              <label for="minBits">Mín. bits</label>
+              <input id="minBits" type="number" min="1" value="1" title="Twitch" />
+            </div>
+            <div class="field">
+              <label for="minDiamonds">Mín. 💎</label>
+              <input id="minDiamonds" type="number" min="1" value="1" title="TikTok" />
+            </div>
+          </div>
+          <p class="hint">Follows de Twitch no están disponibles sin conectar tu cuenta de Twitch.</p>
+          <button id="saveBtn" class="btn-primary">Guardar</button>
+        </div>
+
+      </aside>
+
+      <div class="editor-main">
+
+        <div class="panel stack">
+          <div class="preview-frame-wrap">
+            <iframe id="previewFrame" title="Vista previa de las alertas"></iframe>
+          </div>
+          <div class="test-row">
+            <select id="testPlatform" aria-label="Plataforma"></select>
+            <select id="testType" aria-label="Tipo de alerta"></select>
+            <button id="testBtn" class="btn-primary btn-sm">Probar alerta</button>
+            <button id="clearBtn" class="btn-ghost btn-sm">Limpiar</button>
+          </div>
+          <p class="hint" id="testNote">Las pruebas también aparecen en OBS si el overlay está abierto.</p>
+        </div>
+
+        <div class="panel">
+          <p class="panel-title">OBS Browser Source</p>
+          <p class="hint" style="margin-bottom:10px">Agrégalo como Browser Source de <strong>1920×1080</strong> encima de tus escenas y activa <em>"Control audio via OBS"</em>.</p>
+          <div class="url-row">
+            <input id="overlayUrl" type="text" readonly />
+            <button id="copyUrlBtn" class="btn-ghost btn-sm">Copy</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="/widgets/alerts/editor.js"></script>
+</body>
+</html>

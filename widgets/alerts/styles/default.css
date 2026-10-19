@@ -1,0 +1,272 @@
+/* ── Neon banner (default): one horizontal card per event, themed by event colour --c ── */
+
+.style-default .stage {
+  font-family: 'Poppins', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: min(2.4vw, 4.3vh); /* ~900px wide banner on a 1920x1080 source */
+}
+
+.na { width: auto; min-width: 14em; max-width: 92vw; }
+.na--compact { font-size: .55em; min-width: 11em; }
+
+.na-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: .8em;
+  width: 100%;
+  min-height: 3.3em;
+  padding: .55em .9em .6em 3.75em;
+  box-sizing: border-box;
+  border-radius: 1em 1.4em 1.4em 1em;
+  background:
+    radial-gradient(70% 140% at 0% 50%, color-mix(in srgb, var(--c) 30%, transparent), transparent 60%),
+    linear-gradient(180deg, rgba(14, 18, 34, .95), rgba(8, 10, 22, .96));
+  border: .08em solid color-mix(in srgb, var(--c) 85%, white 10%);
+  box-shadow:
+    0 0 .7em color-mix(in srgb, var(--c) 60%, transparent),
+    inset 0 0 1.2em color-mix(in srgb, var(--c) 18%, transparent),
+    0 .4em 1.2em rgba(0, 0, 0, .5);
+  color: #fff;
+  overflow: visible;
+  animation: na-in .6s cubic-bezier(.2, 1.15, .35, 1) both, na-glow 2.2s .6s ease-in-out infinite;
+}
+.na--compact .na-card { min-height: 2.6em; padding: .4em .8em .45em 3.3em; }
+
+/* Diagonal light stripes bottom-right */
+.na-stripes {
+  position: absolute;
+  right: .6em;
+  bottom: .25em;
+  width: 3.2em;
+  height: 1.3em;
+  background: repeating-linear-gradient(120deg, transparent 0 .35em, color-mix(in srgb, var(--c) 45%, transparent) .35em .55em);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 60%);
+          mask-image: linear-gradient(90deg, transparent, #000 60%);
+  opacity: .7;
+  pointer-events: none;
+}
+
+/* Little light strokes around the icon */
+.na-spark {
+  position: absolute;
+  width: .55em;
+  height: .14em;
+  border-radius: 1em;
+  background: var(--c);
+  box-shadow: 0 0 .3em var(--c);
+  animation: na-pop .4s .45s both;
+}
+.na-spark--1 { left: -.55em; top: .5em; transform: rotate(-35deg); }
+.na-spark--2 { left: -.75em; top: 1.6em; width: .4em; transform: rotate(0deg); }
+.na-spark--3 { left: 2.6em; top: -.45em; transform: rotate(-60deg); width: .45em; }
+
+/* ── icons ─────────────────────────────────────────────────── */
+
+.na-icon {
+  position: absolute;
+  left: -.45em;
+  top: 50%;
+  width: 3.6em;
+  height: 3.6em;
+  margin-top: -1.8em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: na-pop .5s .15s cubic-bezier(.2, 1.4, .4, 1) both;
+}
+.na--compact .na-icon { width: 3em; height: 3em; margin-top: -1.5em; }
+.na-icon svg { display: block; }
+
+/* platform logo tile */
+.na-tile {
+  position: relative;
+  width: 2.7em;
+  height: 2.7em;
+  border-radius: .7em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--brand);
+  color: var(--brand-fg);
+  border: .1em solid rgba(255, 255, 255, .35);
+  box-shadow: 0 0 .8em color-mix(in srgb, var(--c) 70%, transparent), inset 0 -.2em .35em rgba(0, 0, 0, .25);
+  overflow: hidden;
+}
+.na-tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(255, 255, 255, .4), rgba(255, 255, 255, .05) 45%, transparent 55%);
+}
+.na-tile svg { position: relative; width: 58%; height: 58%; }
+
+.na-crown {
+  position: absolute;
+  top: -.35em;
+  left: .2em;
+  width: 1.5em;
+  z-index: 2;
+  transform: rotate(-14deg);
+  filter: drop-shadow(0 .08em .15em rgba(0, 0, 0, .5));
+  animation: na-crown .55s .4s cubic-bezier(.2, 1.5, .4, 1) both;
+}
+.na-crown svg { width: 100%; height: auto; }
+
+/* gold coin */
+.na-coin {
+  width: 2.8em;
+  height: 2.8em;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 35% 30%, #fff6b8 0%, #ffd23f 38%, #f0a516 75%, #b86d05 100%);
+  border: .12em solid #ffe47a;
+  box-shadow: 0 0 0 .14em color-mix(in srgb, var(--c) 70%, transparent), 0 0 1em color-mix(in srgb, var(--c) 70%, transparent),
+              inset 0 0 0 .22em rgba(184, 109, 5, .55);
+}
+.na-coin span {
+  font-weight: 900;
+  font-size: 1.55em;
+  color: #fff4b0;
+  -webkit-text-stroke: .06em #a35e00;
+  paint-order: stroke fill;
+  text-shadow: 0 .05em 0 #8a4f00;
+}
+
+/* gem */
+.na-gem {
+  width: 2.9em;
+  height: 2.9em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--c) 45%, transparent), transparent 70%);
+  filter: drop-shadow(0 0 .35em color-mix(in srgb, var(--c) 90%, transparent));
+}
+.na-gem svg { width: 2.4em; height: 2.4em; }
+
+/* round badge (people, share, heart, gift, gift image) */
+.na-round {
+  width: 2.8em;
+  height: 2.8em;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--c) 60%, white 25%), var(--c) 55%, color-mix(in srgb, var(--c) 60%, black));
+  border: .12em solid rgba(255, 255, 255, .55);
+  box-shadow: 0 0 1em color-mix(in srgb, var(--c) 75%, transparent);
+  overflow: hidden;
+}
+.na-round img { width: 80%; height: 80%; object-fit: contain; }
+.na-glyph { display: flex; color: #fff; width: 1.5em; height: 1.5em; }
+.na-glyph svg { width: 100%; height: 100%; filter: drop-shadow(0 .05em .1em rgba(0, 0, 0, .35)); }
+
+/* raid: hexagon with crosshair */
+.na-hex {
+  position: relative;
+  width: 2.9em;
+  height: 2.9em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--c) 70%, white 15%), var(--c) 50%, color-mix(in srgb, var(--c) 55%, black));
+  clip-path: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0 50%);
+  filter: drop-shadow(0 0 .5em var(--c));
+}
+.na-target { position: absolute; inset: .45em; color: rgba(255, 255, 255, .9); }
+.na-target svg { width: 100%; height: 100%; }
+.na-hex .na-glyph { width: 1.2em; height: 1.2em; }
+
+/* ── text ─────────────────────────────────────────────────── */
+
+.na-text { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.12; padding-right: .3em; }
+.na-name {
+  font-size: .78em;
+  font-weight: 800;
+  color: color-mix(in srgb, var(--c) 75%, white 25%);
+  text-shadow: 0 0 .5em color-mix(in srgb, var(--c) 45%, transparent);
+  max-width: 14em; /* long names truncate, the phrase never does */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  animation: na-rise .4s .25s both;
+}
+.na-title {
+  font-size: 1em;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+  text-shadow: 0 .05em .2em rgba(0, 0, 0, .6);
+  animation: na-rise .4s .32s both;
+}
+.na-title em {
+  font-style: normal;
+  color: color-mix(in srgb, var(--c) 80%, white 20%);
+  text-shadow: 0 0 .45em color-mix(in srgb, var(--c) 55%, transparent);
+}
+.na-sub {
+  margin-top: .2em;
+  font-size: .5em;
+  font-weight: 600;
+  color: #c9d1e8;
+  max-width: 22em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  animation: na-rise .4s .4s both;
+}
+.na-heart, .na-end-heart { display: inline-flex; width: 1.05em; height: 1.05em; color: var(--c); vertical-align: -.15em; }
+.na-heart svg, .na-end-heart svg { width: 100%; height: 100%; filter: drop-shadow(0 0 .2em var(--c)); }
+.na-end-heart { width: .9em; height: .9em; flex-shrink: 0; }
+
+/* right pill ("♥ Follow", "★ Sub") */
+.na-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .4em;
+  flex-shrink: 0;
+  padding: .4em .95em;
+  border-radius: 999px;
+  font-size: .55em;
+  font-weight: 800;
+  color: #fff;
+  background: color-mix(in srgb, var(--c) 22%, rgba(10, 12, 24, .9));
+  border: .12em solid color-mix(in srgb, var(--c) 80%, white 10%);
+  box-shadow: 0 0 .7em color-mix(in srgb, var(--c) 50%, transparent);
+  animation: na-pop .4s .5s both;
+}
+.na-pill-icon { display: inline-flex; width: 1.2em; height: 1.2em; color: var(--c); }
+.na-pill-icon svg { width: 100%; height: 100%; }
+
+/* ── motion ───────────────────────────────────────────────── */
+
+.na.is-leaving .na-card { animation: na-out .6s ease-in forwards; }
+
+@keyframes na-in {
+  0%   { opacity: 0; transform: translateX(-1.6em) scaleX(.85); }
+  65%  { opacity: 1; transform: translateX(.2em) scaleX(1.02); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes na-out {
+  to { opacity: 0; transform: translateX(1.4em); }
+}
+@keyframes na-pop {
+  0%   { opacity: 0; transform: scale(.3); }
+  70%  { opacity: 1; transform: scale(1.12); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes na-crown {
+  0%   { opacity: 0; transform: translateY(-.8em) rotate(-30deg); }
+  100% { opacity: 1; transform: rotate(-14deg); }
+}
+@keyframes na-rise {
+  from { opacity: 0; transform: translateY(.35em); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes na-glow {
+  0%, 100% { box-shadow: 0 0 .7em color-mix(in srgb, var(--c) 60%, transparent), inset 0 0 1.2em color-mix(in srgb, var(--c) 18%, transparent), 0 .4em 1.2em rgba(0, 0, 0, .5); }
+  50%      { box-shadow: 0 0 1.3em color-mix(in srgb, var(--c) 85%, transparent), inset 0 0 1.4em color-mix(in srgb, var(--c) 26%, transparent), 0 .4em 1.2em rgba(0, 0, 0, .5); }
+}
