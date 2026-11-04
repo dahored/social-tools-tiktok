@@ -102,11 +102,17 @@ Set `DB_PROVIDER` in `.env`:
 
 Creates a `SUPER_ADMIN` and an `ADMIN` user. Safe to re-run — skips users that already exist.
 
-### Run inside the dev container
+### Run inside the container
 
 ```bash
+# production compose (docker compose up)
+docker exec social-tools-tiktok-web npm run seed
+
+# dev compose (docker compose -f docker-compose.dev.yml up)
 docker exec social-tools-tiktok-web-dev npm run seed
 ```
+
+Run it again after `docker compose down -v` (that command deletes the database).
 
 ### Default credentials
 
