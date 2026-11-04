@@ -9,7 +9,7 @@ if (!jwtSecret && process.env.NODE_ENV === 'production') {
 }
 
 const env = {
-  port:        Number(process.env.PORT) || 4050,
+  port:        Number(process.env.PORT) || 40005,
   nodeEnv:     process.env.NODE_ENV || 'development',
   jwtSecret:   jwtSecret || 'dev-secret-change-in-production',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',

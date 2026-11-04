@@ -8,7 +8,7 @@ RUN npm install --omit=dev
 COPY . .
 RUN mkdir -p /app/data
 
-EXPOSE 4050
-ENV PORT=4050
+EXPOSE 40005
+ENV PORT=40005
 
 CMD ["npm", "start"]

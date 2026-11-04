@@ -3,7 +3,7 @@
  * Host render worker: keeps a connection to the server and renders the jobs
  * requested from the editor's "Descargar video" button.
  *
- *   npm run worker [-- --server http://localhost:4050]
+ *   npm run worker [-- --server http://localhost:40005]
  *
  * Runs on the host (not in Docker) because HyperFrames needs Node >= 22,
  * Chrome and FFmpeg. Leave it running while you stream / edit.
@@ -14,7 +14,7 @@ import { renderTransition } from './render-lib.mjs';
 
 const { values: args } = parseArgs({
   options: {
-    server:  { type: 'string', default: process.env.RENDER_SERVER || 'http://localhost:4050' },
+    server:  { type: 'string', default: process.env.RENDER_SERVER || 'http://localhost:40005' },
     quality: { type: 'string', default: 'delivery' },
   },
 });

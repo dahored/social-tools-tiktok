@@ -10,8 +10,8 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-Open locally: `http://localhost:4050`
-Open from LAN: `http://<YOUR_LOCAL_IP>:4050`
+Open locally: `http://localhost:40005`
+Open from LAN: `http://<YOUR_LOCAL_IP>:40005`
 
 ---
 

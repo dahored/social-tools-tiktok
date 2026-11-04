@@ -2,7 +2,7 @@
 /**
  * Renders a scene transition to a transparent video for the OBS Stinger.
  *
- *   npm run render -- --username default [--server http://localhost:4050]
+ *   npm run render -- --username default [--server http://localhost:40005]
  *                     [--game gta] [--format webm|mov] [--orientation horizontal|vertical]
  *                     [--quality draft|looks|delivery]
  *
@@ -16,7 +16,7 @@ import { renderTransition } from './render-lib.mjs';
 const { values: args } = parseArgs({
   options: {
     username: { type: 'string', default: 'default' },
-    server:   { type: 'string', default: 'http://localhost:4050' },
+    server:   { type: 'string', default: 'http://localhost:40005' },
     game:     { type: 'string' },
     format:   { type: 'string', default: 'webm' },
     orientation: { type: 'string', default: 'horizontal' },

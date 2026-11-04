@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile.dev
     container_name: social-tools-tiktok-web-dev
     ports:
-      - "4050:4050"
+      - "40005:40005"
     volumes:
       - .:/app
       - /app/node_modules
@@ -33,7 +33,7 @@ services:
       - ./video/render-worker.mjs:/app/video/render-worker.mjs:ro
       - ./storage/transitions:/app/storage/transitions
     environment:
-      - RENDER_SERVER=http://social-tools-tiktok-web:4050
+      - RENDER_SERVER=http://social-tools-tiktok-web:40005
     # reload when render-lib / render-worker change
     command: ["node", "--watch", "render-worker.mjs"]
     depends_on:

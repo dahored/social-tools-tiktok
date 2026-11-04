@@ -3,13 +3,18 @@ services:
     build: .
     container_name: social-tools-tiktok-web
     ports:
-      - "4050:4050"
+      - "40005:40005"
     volumes:
       - app-data:/app/data
       - ./storage/transitions:/app/storage/transitions
     restart: unless-stopped
     env_file:
       - .env
+    environment:
+      # inside Docker "localhost" is the container itself — talk to the mongo service
+      - MONGO_URI=mongodb://mongo:27017/social-tools-tiktok
+    depends_on:
+      - mongo
 
   # Renders scene-transition videos for the editor's "Descargar video" button
   renderer:
@@ -20,10 +25,18 @@ services:
     volumes:
       - ./storage/transitions:/app/storage/transitions
     environment:
-      - RENDER_SERVER=http://social-tools-tiktok-web:4050
+      - RENDER_SERVER=http://social-tools-tiktok-web:40005
     depends_on:
       - social-tools-tiktok-web
     restart: unless-stopped
 
+  mongo:
+    image: mongo:7
+    container_name: social-tools-mongo
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+
 volumes:
   app-data:
+  mongo-data:

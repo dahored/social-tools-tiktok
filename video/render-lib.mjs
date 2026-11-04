@@ -39,7 +39,7 @@ export async function renderTransition({ username, server, game: gameOverride, f
   const W = vertical ? 1080 : 1920;
   const H = vertical ? 1920 : 1080;
   username = String(username || 'default').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 40) || 'default';
-  server   = String(server || 'http://localhost:4050').replace(/\/$/, '');
+  server   = String(server || 'http://localhost:40005').replace(/\/$/, '');
 
   const settings = await fetchJson(`${server}/api/scene-transition?username=${encodeURIComponent(username)}`);
   const game     = gameOverride || settings.game || 'default';
