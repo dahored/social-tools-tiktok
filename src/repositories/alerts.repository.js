@@ -12,7 +12,7 @@ const DEFAULT_SETTINGS = Object.freeze({
   size:     'large',   // large | compact (neon banner)
   duration: 6,         // seconds on screen per alert
   sound:    'style',   // style | off
-  soundPack: 'auto',   // auto (by style) | tropical | sax | pizzicato | arcade | impacto | clasico
+  soundPack: 'auto',   // auto (by style) | stream | logros | tropical | sax | pizzicato | arcade | impacto | clasico
   volume:   70,
   types: {
     donation:     true,

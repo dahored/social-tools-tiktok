@@ -115,3 +115,43 @@ pack sax       SAX02   SAX03   SAX12   SAX15   SAX10   SAX13   SAX05     # Vice 
 pack pizzicato PIZZI12 PIZZI03 PIZZI02 PIZZI15 PIZZI10 PIZZI06 PIZZI13   # playful strings — Neon default
 pack arcade    NES12   NES05   NES08   NES03   NES06   NES09   NES01     # 8-bit
 pack impacto   HIT11   HIT15   HIT10   HIT09   HIT03   HIT05   HIT01     # orchestral hits
+
+# ── Stream-style packs from Freesound CC0 (assets/sounds/freesound/CREDITS.txt) ──
+FS=assets/sounds/freesound
+
+# sfx <out> <max seconds> <src:start:volume> ... — layered, trimmed, faded, normalised
+sfx() {
+  local out=$1 len=$2; shift 2
+  local inputs=() filters="" labels="" i=0
+  for cue in "$@"; do
+    IFS=: read -r id start vol <<<"$cue"
+    inputs+=(-i "$FS/$id.mp3")
+    local ms; ms=$(awk "BEGIN { printf \"%d\", $start * 1000 }")
+    filters+="[$i:a]aformat=sample_rates=48000:channel_layouts=stereo,silenceremove=start_periods=1:start_threshold=-45dB,volume=$vol,adelay=${ms}|${ms}[a$i];"
+    labels+="[a$i]"; i=$((i+1))
+  done
+  local fade; fade=$(awk "BEGIN { printf \"%.3f\", $len - 0.35 }")
+  ffmpeg -v error -y "${inputs[@]}" -filter_complex \
+    "${filters}${labels}amix=inputs=$i:normalize=0,atrim=0:$len,afade=t=out:st=$fade:d=0.35,$NORM" \
+    -c:a libmp3lame -q:a 3 "$out"
+}
+
+P=assets/sounds/alerts/packs/stream; mkdir -p "$P"     # bright, modern stream alerts
+sfx "$P/donation.mp3"     2.2 573374:0:0.9 397354:0.08:1.0          # coins + ta-da
+sfx "$P/raid.mp3"         3.1 456966:0:1.0                          # trumpet fanfare
+sfx "$P/gift_sub.mp3"     2.0 844398:0:1.0 545238:0.05:0.6          # sparkle flourish
+sfx "$P/subscription.mp3" 2.8 528958:0:1.0                          # level up / mission complete
+sfx "$P/follow.mp3"       0.9 571513:0:1.0                          # soft ding-dong
+sfx "$P/share.mp3"        0.6 242502:0:1.0                          # pop
+sfx "$P/like.mp3"         0.7 545238:0:1.0                          # sparkle
+echo "built pack stream"
+
+P=assets/sounds/alerts/packs/logros; mkdir -p "$P"     # gamer achievements
+sfx "$P/donation.mp3"     2.6 856038:0:1.0 573374:0.15:0.7          # victory + coins
+sfx "$P/raid.mp3"         2.0 331361:0:1.0                          # unlock achievement
+sfx "$P/gift_sub.mp3"     2.3 462092:0:1.0                          # sparkling star
+sfx "$P/subscription.mp3" 1.4 813177:0:1.0                          # achievement
+sfx "$P/follow.mp3"       0.5 740423:0:1.0                          # message notification
+sfx "$P/share.mp3"        1.4 616699:0:1.0                          # notification chime
+sfx "$P/like.mp3"         1.7 442943:0:1.0                          # level up
+echo "built pack logros"

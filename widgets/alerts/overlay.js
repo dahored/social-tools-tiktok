@@ -268,7 +268,7 @@
     if (entry.mode === 'custom' && entry.file) {
       return '/api/alerts/sound/' + encodeURIComponent(username) + '/' + type + '?v=' + encodeURIComponent(entry.file + (s.updatedAt || ''));
     }
-    var pack = s.soundPack && s.soundPack !== 'auto' ? s.soundPack : (s.style === 'gta' ? 'tropical' : 'pizzicato');
+    var pack = s.soundPack && s.soundPack !== 'auto' ? s.soundPack : (s.style === 'gta' ? 'tropical' : 'stream');
     if (pack === 'clasico') return '/assets/sounds/alerts/' + (s.style === 'gta' ? 'gta' : 'default') + '.mp3';
     return '/assets/sounds/alerts/packs/' + pack + '/' + type + '.mp3';
   }

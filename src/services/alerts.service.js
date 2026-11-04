@@ -13,7 +13,7 @@ const VALID_STYLES = new Set(['default', 'gta']);
 const TYPES = Object.keys(repo.DEFAULT_SETTINGS.types);
 const PLATFORMS = new Set(['twitch', 'kick', 'youtube', 'tiktok', 'facebook', 'x']);
 const SOUND_MODES = new Set(['style', 'custom', 'off']);
-const SOUND_PACKS = new Set(['auto', 'tropical', 'sax', 'pizzicato', 'arcade', 'impacto', 'clasico']);
+const SOUND_PACKS = new Set(['auto', 'stream', 'logros', 'tropical', 'sax', 'pizzicato', 'arcade', 'impacto', 'clasico']);
 const SOUND_TYPES = {
   'audio/mpeg': 'mp3', 'audio/mp3': 'mp3', 'audio/ogg': 'ogg', 'audio/wav': 'wav', 'audio/x-wav': 'wav',
   'audio/wave': 'wav', 'audio/mp4': 'm4a', 'audio/x-m4a': 'm4a', 'audio/aac': 'm4a', 'audio/webm': 'webm',
